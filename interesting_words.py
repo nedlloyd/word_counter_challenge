@@ -77,8 +77,7 @@ class WordTokenizer:
 
     @staticmethod
     def tokenize_into_sentences(text, document_name):
-        sentence_tokens = sent_tokenize(text)
-        return {st: document_name for st in sentence_tokens}
+        return {document_name: sent_tokenize(text)}
 
     @staticmethod
     def tokenize_into_words(text, word_tokenizer):
