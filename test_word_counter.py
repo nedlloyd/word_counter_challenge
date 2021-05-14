@@ -30,7 +30,7 @@ class TestWordTokenizer(TestCase):
         )
 
     def test_tokenize_sentences(self):
-        with open('tests/test_documents/test_text_1.txt') as file:
+        with open('tests/test_directory/test_text_1.txt') as file:
             text = file.read()
             tokenized_sentences = [
                 "he doesn't even know.",
@@ -130,30 +130,37 @@ class TestWordContextFinder(TestCase):
 
 
 class TestDocumentTextExtractor(TestCase):
+    maxDiff = None
 
     def test_single_document_get_text(self):
         # TODO this could be accomplished by writting temporary file
-        document_string = DocumentTextExtractor.get_string_from_document('tests/test_documents/test_text_2.txt')
+        document_string = DocumentTextExtractor.get_string_from_document('tests/test_directory/test_text_2.txt')
         self.assertEqual(
             document_string, "quite simply the second document.  and that, for now, is all you're getting - YES!"
         )
 
     # def test_single_document_no_file(self):
     #     # TODO this could be accomplished by writting temporary file
-    #     document_string = DocumentTextExtractor.get_string_from_document('tests/test_documents/no_file.txt')
+    #     document_string = DocumentTextExtractor.get_string_from_document('tests/test_directory/no_file.txt')
 
     def test_multiple_documents_get_text(self):
-        document_string = DocumentTextExtractor().get_string_from_directory('test/test_documents')
+        document_string = DocumentTextExtractor().get_string_from_directory('tests/test_directory')
+        # print(f'1: {document_string}')
+        # print()
+        # with open('tests/test_all_text.txt') as file:
+        #     # print(f'2: {file.read()}')
+        #     file_string = file.read()
         self.assertEqual(
             document_string,
-            "he doesn't even know. and a list of movies: '2001', 'Computer Chess', 'The Red Shoes'. "
-            "The schools' movie is nice.  Too nice even. way-too-nice.  "
-            "quite simply the second document.  and that, for now, is all you're getting - YES!"
+            "quite simply the second document.  "
+            "and that, for now, is all you're getting - YES! he doesn't even know. "
+            "and a list of movies: '2001', 'Computer Chess', 'The Red Shoes'. "
+            "The schools' movie is nice.  Too nice even. way-too-nice."
         )
 
 
     # def test_normalize_text(self):
-    #     with open('tests/test_documents/test_text_1.txt') as file:
+    #     with open('tests/test_directory/test_text_1.txt') as file:
     #         text = file.read()
     #         wn = WordNormalisation()
     #         tokenized_sentences = [

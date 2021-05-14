@@ -2,7 +2,7 @@
 HOw to process all the text, using yield
 
 how to find all the interesting words?
-- easily can count the highest number of words of each type in document
+- easily can count the highest number of words of each type in documentdeactivate
     - how to count only certainly kinds of words
 - then can easily iterate through actually finding where each is located and storing the sentence
     - probably loop through the sentences
@@ -46,7 +46,12 @@ class WordContextFinder:
         return context_dict
 
 
+# TODO: error handling on opening files
 class DocumentTextExtractor:
+
+    # def __init__(self):
+    #     # class or instance variable
+    #     self.document_string = ''
 
     @staticmethod
     def get_string_from_document(document_name):
@@ -54,8 +59,14 @@ class DocumentTextExtractor:
             return file.read()
 
     def get_string_from_directory(self, directory_name):
-        # TODO: error handling on opening files
-        pass
+        document_string = ''
+        for file_path in os.listdir(directory_name):
+            new_document_string = self.get_string_from_document(f'{directory_name}/{file_path}')
+            if document_string:
+                document_string = f"{document_string} {new_document_string}"
+            else:
+                document_string = new_document_string
+        return document_string
 
 
 class WordTokenizer:
@@ -93,4 +104,5 @@ class WordCounter:
 
 if __name__ == '__main__':
     wc = WordCounter()
-    non_stop_words = wc.get_all_non_stop_words('documents')
+    print('ALL WORKING')
+    # non_stop_words = wc.get_all_non_stop_words('documents')
