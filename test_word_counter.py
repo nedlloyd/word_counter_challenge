@@ -11,38 +11,52 @@ class TestWordTokenizer(TestCase):
     def test_keeps_words_with_apostrophes(self):
         text = "Just one line - of text doesn't matter."
         self.assertEqual(
-            WordTokenizer(text, TweetTokenizer).words,
+            WordTokenizer(text, TweetTokenizer, 'test_text_2.txt').words,
             ["Just", "one", "line", "-", "of", "text", "doesn't", "matter", "."]
         )
 
     def test_tokenize_words(self):
         text = "Just one line of text."
         self.assertEqual(
-            WordTokenizer(text, TweetTokenizer).words,
+            WordTokenizer(text, TweetTokenizer, 'test_text_2.txt').words,
             ["Just", "one", "line", "of", "text", "."]
         )
 
     def test_tokenize_single_sentence(self):
         text = "Just one line of text."
         self.assertEqual(
-            WordTokenizer(text, TweetTokenizer).sentences,
-            ["Just one line of text."]
+            WordTokenizer(text, TweetTokenizer, 'test_text_2.txt').sentences,
+            {"Just one line of text.": 'test_text_2.txt'}
         )
 
-    def test_tokenize_sentences(self):
+    def test_tokenize_sentences_test_text_1(self):
         with open('tests/test_directory/test_text_1.txt') as file:
             text = file.read()
-            tokenized_sentences = [
-                "he doesn't even know.",
-                "and a list of movies: '2001', 'Computer Chess', 'The Red Shoes'.",
-                "The schools' movie is nice.",
-                'Too nice even.',
-                'way-too-nice.'
-            ]
+            tokenized_sentences = {
+                "he doesn't even know.": 'test_text_1.txt',
+                "and a list of movies: '2001', 'Computer Chess', 'The Red Shoes'.": 'test_text_1.txt',
+                "The schools' movie is nice.": 'test_text_1.txt',
+                'Too nice even.': 'test_text_1.txt',
+                'way-too-nice.': 'test_text_1.txt'
+            }
             self.assertEqual(
-                WordTokenizer(text, TweetTokenizer).sentences,
+                WordTokenizer(text, TweetTokenizer, 'test_text_1.txt').sentences,
                 tokenized_sentences
             )
+
+    def test_tokenize_sentences_test_text_2(self):
+        with open('tests/test_directory/test_text_2.txt') as file:
+            text = file.read()
+            tokenized_sentences = {
+                "quite simply the second document.": 'test_text_2.txt',
+                "and that, for now, is all you're getting - YES!": "test_text_2.txt"
+            }
+            self.assertEqual(
+                WordTokenizer(text, TweetTokenizer, 'test_text_2.txt').sentences,
+                tokenized_sentences
+            )
+
+
 
 
 class TestWordNormalisation(TestCase):
