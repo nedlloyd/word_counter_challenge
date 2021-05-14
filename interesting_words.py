@@ -71,13 +71,14 @@ class DocumentTextExtractor:
 
 class WordTokenizer:
 
-    def __init__(self, text, word_tokenizer, document_name):
-        self.sentences = self.tokenize_into_sentences(text, document_name)
+    def __init__(self, text, word_tokenizer):
+        self.sentences = self.tokenize_into_sentences(text)
         self.words = self.tokenize_into_words(text, word_tokenizer)
 
     @staticmethod
-    def tokenize_into_sentences(text, document_name):
-        return {document_name: sent_tokenize(text)}
+    def tokenize_into_sentences(text):
+        return sent_tokenize(text)
+        # return {document_name: sent_tokenize(text)}
 
     @staticmethod
     def tokenize_into_words(text, word_tokenizer):

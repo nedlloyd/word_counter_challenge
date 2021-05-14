@@ -11,22 +11,22 @@ class TestWordTokenizer(TestCase):
     def test_keeps_words_with_apostrophes(self):
         text = "Just one line - of text doesn't matter."
         self.assertEqual(
-            WordTokenizer(text, TweetTokenizer, 'test_text_2.txt').words,
+            WordTokenizer(text, TweetTokenizer).words,
             ["Just", "one", "line", "-", "of", "text", "doesn't", "matter", "."]
         )
 
     def test_tokenize_words(self):
         text = "Just one line of text."
         self.assertEqual(
-            WordTokenizer(text, TweetTokenizer, 'test_text_2.txt').words,
+            WordTokenizer(text, TweetTokenizer).words,
             ["Just", "one", "line", "of", "text", "."]
         )
 
     def test_tokenize_single_sentence(self):
         text = "Just one line of text."
         self.assertEqual(
-            WordTokenizer(text, TweetTokenizer, 'test_text_2.txt').sentences,
-            {'test_text_2.txt': ["Just one line of text."]}
+            WordTokenizer(text, TweetTokenizer).sentences,
+            ["Just one line of text."]
         )
 
     def test_tokenize_sentences_test_text_1(self):
@@ -40,19 +40,19 @@ class TestWordTokenizer(TestCase):
                 'way-too-nice.'
             ]
             self.assertEqual(
-                WordTokenizer(text, TweetTokenizer, 'test_text_1.txt').sentences,
-                {"test_text_1.txt": sentence_tokens}
+                WordTokenizer(text, TweetTokenizer).sentences,
+                sentence_tokens
             )
 
     def test_tokenize_sentences_test_text_2(self):
         with open('tests/test_directory/test_text_2.txt') as file:
             text = file.read()
-            tokenized_sentences = [
+            sentence_tokens = [
                 "quite simply the second document.", "and that, for now, is all you're getting - YES!"
             ]
             self.assertEqual(
-                WordTokenizer(text, TweetTokenizer, 'test_text_2.txt').sentences,
-                {'test_text_2.txt': tokenized_sentences}
+                WordTokenizer(text, TweetTokenizer).sentences,
+                sentence_tokens
             )
 
 
