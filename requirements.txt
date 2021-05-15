@@ -11,6 +11,7 @@ jedi==0.17.2
 joblib==1.0.1
 nltk==3.6.2
 numpy==1.20.3
+pandas==1.2.4
 parso==0.7.1
 pexpect==4.8.0
 pickleshare==0.7.5
@@ -18,8 +19,10 @@ pluggy==0.13.1
 prompt-toolkit==3.0.18
 ptyprocess==0.7.0
 Pygments==2.8.1
+python-dateutil==2.8.1
 python-jsonrpc-server==0.4.0
 python-language-server==0.36.2
+pytz==2021.1
 regex==2021.4.4
 six==1.15.0
 tqdm==4.60.0
