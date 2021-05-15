@@ -160,47 +160,95 @@ class TestWordCounter(TestCase):
 class TestWordContextFinder(TestCase):
 
     def test_gets_context_of_word(self):
-        sentences = {'text_1': ['let us go then', 'you and i', 'as the evening is spread out against the sky']}
+        sentences = [
+            ('text_1', 'let us go then'), ('text_1', 'you and i'),
+            ('text_1', 'as the evening is spread out against the sky')
+        ]
         words = ['evening']
         wcf = WordContextFinder(sentences, words)
-        self.assertEqual(wcf.contexts, {'evening': {'as the evening is spread out against the sky'}})
+        self.assertEqual(dict(wcf.contexts), {'evening': 'text_1: as the evening is spread out against the sky\n\n'})
 
     def test_multiple_sentences(self):
         sentences = [
-            'let us go then', 'you and i', 'as the evening is spread out against the sky',
-            'like a patient etherised upon a table', 'let us go', 'through half deserted streets'
+            ('text_1', 'let us go then'), ('text_1', 'you and i'),
+            ('text_1', 'as the evening is spread out against the sky'),
+            ('text_1', 'like a patient etherised upon a table'), ('text_1', 'let us go'),
+            ('text_1', 'through half deserted streets')
         ]
         words = ['us']
         wcf = WordContextFinder(sentences, words)
-        self.assertEqual(
-            wcf.contexts,
-            {'us': ['let us go then', 'let us go']}
-        )
+        self.assertEqual(dict(wcf.contexts), {'us': 'text_1: let us go then\n\ntext_1: let us go\n\n'})
 
     def test_duplicate_sentences(self):
         sentences = [
-            'let us go', 'you and i', 'as the evening is spread out against the sky',
-            'like a patient etherised upon a table', 'let us go', 'through half deserted streets'
+            ('text_1', 'let us go'), ('text_1', 'you and i'),
+            ('text_1', 'as the evening is spread out against the sky'),
+            ('text_1', 'like a patient etherised upon a table'), ('text_1', 'let us go'),
+            ('text_1', 'through half deserted streets')
         ]
         words = ['us']
         wcf = WordContextFinder(sentences, words)
         self.assertEqual(
-            wcf.contexts,
-            {'us': ['let us go', 'let us go']}
+            dict(wcf.contexts),
+            {'us': 'text_1: let us go\n\ntext_1: let us go\n\n'}
+        )
+
+    def test_multiple_documents(self):
+        sentences = [
+            ('text_1', 'let us go then'), ('text_1', 'you and i'),
+            ('text_1', 'as the evening is spread out against the sky'),
+            ('text_2', 'like a patient etherised upon a table'), ('text_2', 'let us go'),
+            ('text_2', 'through half deserted streets')
+        ]
+        words = ['us']
+        wcf = WordContextFinder(sentences, words)
+        self.assertEqual(dict(wcf.contexts), {'us': 'text_1: let us go then\n\ntext_2: let us go\n\n'})
+
+    def test_multiple_documents_same_sentence(self):
+        sentences = [
+            ('text_1', 'let us go'), ('text_1', 'you and i'),
+            ('text_1', 'as the evening is spread out against the sky'),
+            ('text_2', 'like a patient etherised upon a table'), ('text_2', 'let us go'),
+            ('text_2', 'through half deserted streets')
+        ]
+        words = ['us']
+        wcf = WordContextFinder(sentences, words)
+        self.assertEqual(
+            dict(wcf.contexts),
+            {'us': 'text_1: let us go\n\ntext_2: let us go\n\n'}
         )
 
     def test_multiple_words(self):
         sentences = [
-            'let us go then', 'you and i', 'as the evening is spread out against the sky',
-            'like a patient etherised upon a table', 'let us go', 'through half deserted streets'
+            ('text_1', 'let us go then'), ('text_1', 'you and i'),
+            ('text_1', 'as the evening is spread out against the sky'),
+            ('text_1', 'like a patient etherised upon a table'),
+            ('text_1', 'let us go'), ('text_1', 'through half deserted streets')
         ]
         words = ['us', 'evening']
         wcf = WordContextFinder(sentences, words)
         self.assertEqual(
-            wcf.contexts,
+            dict(wcf.contexts),
             {
-                'us': ['let us go then', 'let us go'],
-                'evening': ['as the evening is spread out against the sky']
+                'us': 'text_1: let us go then\n\ntext_1: let us go\n\n',
+                'evening': 'text_1: as the evening is spread out against the sky\n\n'
+            }
+        )
+
+    def test_multiple_words_diff_docs(self):
+        sentences = [
+            ('text_1', 'let us go then'), ('text_1', 'you and i'),
+            ('text_1', 'as the evening is spread out against the sky'),
+            ('text_2', 'like a patient etherised upon a table'), ('text_2', 'let us go'),
+            ('text_2', 'through half deserted streets'),
+        ]
+        words = ['us', 'evening']
+        wcf = WordContextFinder(sentences, words)
+        self.assertEqual(
+            dict(wcf.contexts),
+            {
+                'us': 'text_1: let us go then\n\ntext_2: let us go\n\n',
+                'evening': 'text_1: as the evening is spread out against the sky\n\n'
             }
         )
 

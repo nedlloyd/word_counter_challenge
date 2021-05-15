@@ -42,12 +42,11 @@ class WordContextFinder:
 
     @staticmethod
     def get_word_contexts(sentences, words):
-        # context_dict = {k: [] for k in set(words)}
-        context_dict = defaultdict(list)
-        for sentence in sentences:
+        context_dict = defaultdict(str)
+        for (document, sentence) in sentences:
             intersection = set(words).intersection(set(sentence.split()))
-            for key in intersection:
-                context_dict[key].append(sentence)
+            for word in intersection:
+                context_dict[word] += f'{document}: {sentence}\n\n'
         return context_dict
 
 
