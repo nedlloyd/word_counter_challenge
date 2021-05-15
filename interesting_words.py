@@ -78,7 +78,6 @@ class WordTokenizer:
     @staticmethod
     def tokenize_into_sentences(text):
         return sent_tokenize(text)
-        # return {document_name: sent_tokenize(text)}
 
     @staticmethod
     def tokenize_into_words(text, word_tokenizer):
@@ -112,6 +111,10 @@ class WordNormalizer:
         for ((word, tag), (following_word, following_tag)) in bigram_tokens:
             words_following_dict[word].add(following_tag)
         return words_following_dict
+
+    @staticmethod
+    def find_number_follow_types(words_following_dict, number):
+        return [word for word, follow_types in words_following_dict.items() if len(follow_types) >= number]
 
 
 class WordCounter:

@@ -135,7 +135,7 @@ class TestWordNormalisation(TestCase):
         tokens = [(('just', 'ADV'), ('three', 'NUM')), (('three', 'NUM'), ('words', 'NOUN'))]
         following_dict = {'just': {'NUM'}, 'three': {'NOUN'}}
         self.assertEqual(
-            dict(WordNormalizer.create_word_type_following_dict(tokens)),
+            WordNormalizer.create_word_type_following_dict(tokens),
             following_dict
         )
 
@@ -151,9 +151,29 @@ class TestWordNormalisation(TestCase):
         ]
         following_dict = {'just': {'NUM', 'VERB'}, 'three': {'NOUN'}, 'words': {'ADV'}}
         self.assertEqual(
-            dict(WordNormalizer.create_word_type_following_dict(tokens)),
+            WordNormalizer.create_word_type_following_dict(tokens),
             following_dict
         )
+
+    def test_find_words_with_two_different_following_word_types(self):
+        following_dict = {'just': {'NUM', 'VERB'}, 'three': {'NOUN'}, 'words': {'ADV'}}
+        self.assertEqual(
+            WordNormalizer.find_number_follow_types(following_dict, 2),
+            ['just']
+        )
+
+    def test_find_words_with_three_different_following_word_types(self):
+        following_dict = {
+            'just': {'NUM', 'VERB', 'NOUN'},
+            'three': {'NOUN'},
+            'words': {'ADV', 'VERB'},
+            'follow': {'PRON', 'NOUN', 'ADJ', 'DET'}
+        }
+        self.assertEqual(
+            WordNormalizer.find_number_follow_types(following_dict, 3),
+            ['just', 'follow']
+        )
+
 
 
 class TestWordCounter(TestCase):
@@ -173,13 +193,15 @@ class TestWordCounter(TestCase):
         )
 
 
+
+
 class TestWordContextFinder(TestCase):
 
     def test_gets_context_of_word(self):
-        sentences = ['let us go then', 'you and i', 'as the evening is spread out against the sky']
+        sentences = {'text_1': ['let us go then', 'you and i', 'as the evening is spread out against the sky']}
         words = ['evening']
         wcf = WordContextFinder(sentences, words)
-        self.assertEqual(wcf.contexts, {'evening': ['as the evening is spread out against the sky']})
+        self.assertEqual(wcf.contexts, {'evening': {'as the evening is spread out against the sky'}})
 
     def test_multiple_sentences(self):
         sentences = [
