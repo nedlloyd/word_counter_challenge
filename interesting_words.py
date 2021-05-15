@@ -15,6 +15,11 @@ remove all punctuation inc from stop words then remove stop words then count the
 
 the moment you're saving stuff in a variable it's liable to get a bit crazy memorywise
 
+
+find words with highest different type subsequent words
+remove stop tokens
+find context for those words
+
 """
 import os
 from collections import defaultdict
@@ -49,60 +54,40 @@ class WordContextFinder:
 # TODO: error handling on opening files
 class DocumentTextExtractor:
 
-    # def __init__(self):
-    #     # class or instance variable
-    #     self.document_string = ''
+    def __init__(self):
+        self.word_tokenizer = CustomTokenizer
+        self.word_tokens = []
+        self.sentence_tokens = {}
+        self.tagged_normalized_words = []
 
     @staticmethod
     def get_string_from_document(document_name):
         with open(document_name) as file:
             return file.read()
 
-    def get_string_from_directory(self, directory_name):
-        document_string = ''
-        for file_path in os.listdir(directory_name):
-            new_document_string = self.get_string_from_document(f'{directory_name}/{file_path}')
-            if document_string:
-                document_string = f"{document_string} {new_document_string}"
-            else:
-                document_string = new_document_string
-        return document_string
+    # TODO: directory in directories? what then?
+    def get_sentence_and_work_tokens(self, directory_name):
+        for file_name in os.listdir(directory_name):
+            document_string = self.get_string_from_document(f'{directory_name}/{file_name}')
+            tokenizer = CustomTokenizer(document_string)
+            self.word_tokens += tokenizer.words
+            self.sentence_tokens[file_name] = tokenizer.sentences
 
+    def normalize_words(self):
+        word_normalizer = WordNormalizer()
+        self.tagged_normalized_words = word_normalizer.normalize_words(self.word_tokens)
 
-class WordTokenizer:
-
-    def __init__(self, text, word_tokenizer):
-        self.sentences = self.tokenize_into_sentences(text)
-        self.words = self.tokenize_into_words(text, word_tokenizer)
-
-    @staticmethod
-    def tokenize_into_sentences(text):
-        return sent_tokenize(text)
-
-    @staticmethod
-    def tokenize_into_words(text, word_tokenizer):
-        tweet_tokenizer = word_tokenizer()
-        return tweet_tokenizer.tokenize(text)
-
-
-class WordNormalizer:
-
-    @staticmethod
-    def remove_from_tokens(tokens, remove_list):
-        """
-        :param tokens: List of String objects
-        :param remove_list: List of String objects - tokens to remove - should be in lower case
-        :return: List of String objects corresponding to tokens - remove_list
-        """
-        return [token for token in tokens if token.lower() not in remove_list]
-
-    @staticmethod
-    def word_tagger(tokens):
-        return pos_tag(tokens, tagset='universal')
-
-    @staticmethod
-    def create_bigrams(tokens):
-        return bigrams(tokens)
+    def get_interesting_words(self, number_following=3):
+        # create word_following_dict
+        following_dict = self.create_word_type_following_dict(self.tagged_normalized_words)
+        # print(f"take: {following_dict['take']}")
+        # print(f"nothing: {following_dict['nothing']}")
+        # print(f"time: {following_dict['time']}")
+        # print(f"get: {following_dict['get']}")
+        # get all words that have three or more different followers
+        interesting_words = self.find_number_follow_types(following_dict, number_following)
+        # strip out the stop words
+        return WordNormalizer.remove_from_tokens(interesting_words, stopwords.words('english'))
 
     @staticmethod
     def create_word_type_following_dict(bigram_tokens):
@@ -117,14 +102,60 @@ class WordNormalizer:
         return [word for word, follow_types in words_following_dict.items() if len(follow_types) >= number]
 
 
+# TODO: make these more generic
+#  allow it to be called a bit more genrically
+class WordNormalizer:
+
+    @staticmethod
+    def remove_from_tokens(tokens, remove_list):
+        """
+        :param tokens: List of String objects
+        :param remove_list: List of String objects - tokens to remove - should be in lower case
+        :return: List of String objects corresponding to tokens - remove_list
+        """
+        # TODO: is there anything that can't be stringed?
+        # TODO: no sure makes sense to also turn it all to strings here
+        return [token for token in tokens if token.lower() not in remove_list]
+
+    @staticmethod
+    def word_tagger(tokens):
+        return pos_tag(tokens, tagset='universal')
+
+    @staticmethod
+    def create_bigrams(tokens):
+        return bigrams(tokens)
+
+    def normalize_words(self, word_tokens):
+        no_punct_tokens = self.remove_from_tokens(word_tokens, list(punctuation) + ['’', '—'])
+        tagged_tokens = self.word_tagger(no_punct_tokens)
+        return self.create_bigrams(tagged_tokens)
+
+
+# TODO: maybe make this follow the same pattern as normal tokenizers
+#  - maybe even get rid of it entirely
+class CustomTokenizer:
+
+    def __init__(self, text):
+        word_tokenizer = TweetTokenizer()
+        self.sentences = self.tokenize_into_sentences(text)
+        self.words = self.tokenize(text, word_tokenizer)
+
+    @staticmethod
+    def tokenize_into_sentences(text):
+        return sent_tokenize(text)
+
+    @staticmethod
+    def tokenize(text, word_tokenizer):
+        return word_tokenizer.tokenize(text)
+
+
 class WordCounter:
 
     @staticmethod
     def most_common_words(words, number):
         return FreqDist(words).most_common(number)
 
-    # def (self):
-    #     pass
+
 
 
 if __name__ == '__main__':

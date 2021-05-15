@@ -3,29 +3,29 @@ from unittest import main, TestCase
 
 from nltk import TweetTokenizer
 
-from interesting_words import WordCounter, WordNormalizer, WordTokenizer, WordContextFinder, DocumentTextExtractor
+from interesting_words import WordCounter, WordNormalizer, CustomTokenizer, WordContextFinder, DocumentTextExtractor
 
 
-class TestWordTokenizer(TestCase):
+class TestCustomTokenizer(TestCase):
 
     def test_keeps_words_with_apostrophes(self):
         text = "Just one line - of text doesn't matter."
         self.assertEqual(
-            WordTokenizer(text, TweetTokenizer).words,
+            CustomTokenizer(text).words,
             ["Just", "one", "line", "-", "of", "text", "doesn't", "matter", "."]
         )
 
     def test_tokenize_words(self):
         text = "Just one line of text."
         self.assertEqual(
-            WordTokenizer(text, TweetTokenizer).words,
+            CustomTokenizer(text).words,
             ["Just", "one", "line", "of", "text", "."]
         )
 
     def test_tokenize_single_sentence(self):
         text = "Just one line of text."
         self.assertEqual(
-            WordTokenizer(text, TweetTokenizer).sentences,
+            CustomTokenizer(text).sentences,
             ["Just one line of text."]
         )
 
@@ -40,7 +40,7 @@ class TestWordTokenizer(TestCase):
                 'way-too-nice.'
             ]
             self.assertEqual(
-                WordTokenizer(text, TweetTokenizer).sentences,
+                CustomTokenizer(text).sentences,
                 sentence_tokens
             )
 
@@ -51,7 +51,7 @@ class TestWordTokenizer(TestCase):
                 "quite simply the second document.", "and that, for now, is all you're getting - YES!"
             ]
             self.assertEqual(
-                WordTokenizer(text, TweetTokenizer).sentences,
+                CustomTokenizer(text).sentences,
                 sentence_tokens
             )
 
@@ -80,6 +80,14 @@ class TestWordNormalisation(TestCase):
         self.assertEqual(
             WordNormalizer.remove_from_tokens(tokens, remove_list),
             ["Just", "one", "line", "text", "matter"]
+        )
+
+    def test_remove_tokens_contains_digits(self):
+        tokens = ["Just", 1, "line", "-", "Of", "text", "Doesn't", "matter", "."]
+        remove_list = ['of', "doesn't"] + list(punctuation)
+        self.assertEqual(
+            WordNormalizer.remove_from_tokens(tokens, remove_list),
+            ["Just", 1, "line", "text", "matter"]
         )
 
     def test_tag_word_types(self):
@@ -131,50 +139,6 @@ class TestWordNormalisation(TestCase):
             token_bigrams
         )
 
-    def test_create_word_type_following_dict(self):
-        tokens = [(('just', 'ADV'), ('three', 'NUM')), (('three', 'NUM'), ('words', 'NOUN'))]
-        following_dict = {'just': {'NUM'}, 'three': {'NOUN'}}
-        self.assertEqual(
-            WordNormalizer.create_word_type_following_dict(tokens),
-            following_dict
-        )
-
-    def test_create_word_type_following_dict_multiple_following(self):
-        """
-        Test when a word is followed by more than one different kinds of words
-        """
-        tokens = [
-            (('just', 'ADV'), ('three', 'NUM')),
-            (('three', 'NUM'), ('words', 'NOUN')),
-            (('words', 'NOUN'), ('just', 'ADV')),
-            (('just', 'ADV'), ('say', 'VERB'))
-        ]
-        following_dict = {'just': {'NUM', 'VERB'}, 'three': {'NOUN'}, 'words': {'ADV'}}
-        self.assertEqual(
-            WordNormalizer.create_word_type_following_dict(tokens),
-            following_dict
-        )
-
-    def test_find_words_with_two_different_following_word_types(self):
-        following_dict = {'just': {'NUM', 'VERB'}, 'three': {'NOUN'}, 'words': {'ADV'}}
-        self.assertEqual(
-            WordNormalizer.find_number_follow_types(following_dict, 2),
-            ['just']
-        )
-
-    def test_find_words_with_three_different_following_word_types(self):
-        following_dict = {
-            'just': {'NUM', 'VERB', 'NOUN'},
-            'three': {'NOUN'},
-            'words': {'ADV', 'VERB'},
-            'follow': {'PRON', 'NOUN', 'ADJ', 'DET'}
-        }
-        self.assertEqual(
-            WordNormalizer.find_number_follow_types(following_dict, 3),
-            ['just', 'follow']
-        )
-
-
 
 class TestWordCounter(TestCase):
 
@@ -191,8 +155,6 @@ class TestWordCounter(TestCase):
             WordCounter.most_common_words(tokens, 3),
             [('line', 3), ('matter', 3), ('words', 3),]
         )
-
-
 
 
 class TestWordContextFinder(TestCase):
@@ -244,7 +206,6 @@ class TestWordContextFinder(TestCase):
 
 
 class TestDocumentTextExtractor(TestCase):
-    maxDiff = None
 
     def test_single_document_get_text(self):
         # TODO this could be accomplished by writting temporary file
@@ -257,37 +218,89 @@ class TestDocumentTextExtractor(TestCase):
     #     # TODO this could be accomplished by writting temporary file
     #     document_string = DocumentTextExtractor.get_string_from_document('tests/test_directory/no_file.txt')
 
-    def test_multiple_documents_get_text(self):
-        document_string = DocumentTextExtractor().get_string_from_directory('tests/test_directory')
-        # print(f'1: {document_string}')
-        # print()
-        # with open('tests/test_all_text.txt') as file:
-        #     # print(f'2: {file.read()}')
-        #     file_string = file.read()
+    def test_multiple_documents_get_word_tokens(self):
+        text_extractor = DocumentTextExtractor()
+        text_extractor.get_sentence_and_work_tokens('tests/test_directory')
+        self.assertEqual(len(text_extractor.word_tokens), 58)
+
+    def test_document_get_word_tokens(self):
+        text_extractor = DocumentTextExtractor()
+        text_extractor.get_sentence_and_work_tokens('tests/test_directory_single_file')
+        self.assertEqual(len(text_extractor.word_tokens), 7)
+
+    def test_splits_sentences_by_document(self):
+        text_extractor = DocumentTextExtractor()
+        text_extractor.get_sentence_and_work_tokens('tests/test_directory_single_file')
+        self.assertEqual(list(text_extractor.sentence_tokens.keys()), ['single_file.txt'])
+
+    def test_gets_num_of_sentences(self):
+        text_extractor = DocumentTextExtractor()
+        text_extractor.get_sentence_and_work_tokens('tests/test_directory_single_file')
+        self.assertEqual(len(text_extractor.sentence_tokens.values()), 1)
+
+    def test_splits_sentences_by_multiple_docs(self):
+        text_extractor = DocumentTextExtractor()
+        text_extractor.get_sentence_and_work_tokens('tests/test_directory')
+        self.assertEqual(set(text_extractor.sentence_tokens.keys()), {'test_text_1.txt', 'test_text_2.txt'})
+
+    def test_gets_num_of_sentences_multiple_docs(self):
+        text_extractor = DocumentTextExtractor()
+        text_extractor.get_sentence_and_work_tokens('tests/test_directory')
+        self.assertEqual(len([sent for sent_set in text_extractor.sentence_tokens.values() for sent in sent_set]), 7)
+
+    def test_create_word_type_following_dict(self):
+        tokens = [(('just', 'ADV'), ('three', 'NUM')), (('three', 'NUM'), ('words', 'NOUN'))]
+        following_dict = {'just': {'NUM'}, 'three': {'NOUN'}}
         self.assertEqual(
-            document_string,
-            "quite simply the second document.  "
-            "and that, for now, is all you're getting - YES! he doesn't even know. "
-            "and a list of movies: '2001', 'Computer Chess', 'The Red Shoes'. "
-            "The schools' movie is nice.  Too nice even. way-too-nice."
+            DocumentTextExtractor().create_word_type_following_dict(tokens),
+            following_dict
+        )
+
+    def test_create_word_type_following_dict_multiple_following(self):
+        """
+        Test when a word is followed by more than one different kinds of words
+        """
+        tokens = [
+            (('just', 'ADV'), ('three', 'NUM')),
+            (('three', 'NUM'), ('words', 'NOUN')),
+            (('words', 'NOUN'), ('just', 'ADV')),
+            (('just', 'ADV'), ('say', 'VERB'))
+        ]
+        following_dict = {'just': {'NUM', 'VERB'}, 'three': {'NOUN'}, 'words': {'ADV'}}
+        self.assertEqual(
+            DocumentTextExtractor().create_word_type_following_dict(tokens),
+            following_dict
+        )
+
+    def test_find_words_with_two_different_following_word_types(self):
+        following_dict = {'just': {'NUM', 'VERB'}, 'three': {'NOUN'}, 'words': {'ADV'}}
+        self.assertEqual(
+            DocumentTextExtractor().find_number_follow_types(following_dict, 2),
+            ['just']
+        )
+
+    def test_find_words_with_three_different_following_word_types(self):
+        following_dict = {
+            'just': {'NUM', 'VERB', 'NOUN'},
+            'three': {'NOUN'},
+            'words': {'ADV', 'VERB'},
+            'follow': {'PRON', 'NOUN', 'ADJ', 'DET'}
+        }
+        self.assertEqual(
+            DocumentTextExtractor().find_number_follow_types(following_dict, 3),
+            ['just', 'follow']
+        )
+
+    def test_get_interesting_words(self):
+        text_extractor = DocumentTextExtractor()
+        text_extractor.get_sentence_and_work_tokens('tests/test_extractor')
+        text_extractor.normalize_words()
+        self.assertEqual(
+            text_extractor.get_interesting_words(number_following=2), ['take', 'nothing', 'time', 'get']
         )
 
 
-    # def test_normalize_text(self):
-    #     with open('tests/test_directory/test_text_1.txt') as file:
-    #         text = file.read()
-    #         wn = WordNormalisation()
-    #         tokenized_sentences = [
-    #             "he doesn't even know.",
-    #             "and a list of movies: '2001', 'Computer Chess', 'The Red Shoes'.",
-    #             "The schools' movie is nice.",
-    #             'Too nice even.',
-    #             'way-too-nice.'
-    #         ]
-    #         self.assertEqual(
-    #             wn.normalize_text(text),
-    #             tokenized_sentences
-    #         )
+
 
 
 
