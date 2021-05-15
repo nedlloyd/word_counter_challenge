@@ -231,22 +231,23 @@ class TestDocumentTextExtractor(TestCase):
     def test_splits_sentences_by_document(self):
         text_extractor = DocumentTextExtractor()
         text_extractor.get_sentence_and_work_tokens('tests/test_directory_single_file')
-        self.assertEqual(list(text_extractor.sentence_tokens.keys()), ['single_file.txt'])
+        self.assertEqual(text_extractor.sentence_tokens, [('single_file.txt', 'one, two, three and four')])
 
     def test_gets_num_of_sentences(self):
         text_extractor = DocumentTextExtractor()
         text_extractor.get_sentence_and_work_tokens('tests/test_directory_single_file')
-        self.assertEqual(len(text_extractor.sentence_tokens.values()), 1)
+        self.assertEqual(len(text_extractor.sentence_tokens), 1)
 
     def test_splits_sentences_by_multiple_docs(self):
         text_extractor = DocumentTextExtractor()
         text_extractor.get_sentence_and_work_tokens('tests/test_directory')
-        self.assertEqual(set(text_extractor.sentence_tokens.keys()), {'test_text_1.txt', 'test_text_2.txt'})
+        self.assertEqual(text_extractor.sentence_tokens[0], ('test_text_2.txt', 'quite simply the second document.'))
+        self.assertEqual(text_extractor.sentence_tokens[6], ('test_text_1.txt', 'way-too-nice.'))
 
     def test_gets_num_of_sentences_multiple_docs(self):
         text_extractor = DocumentTextExtractor()
         text_extractor.get_sentence_and_work_tokens('tests/test_directory')
-        self.assertEqual(len([sent for sent_set in text_extractor.sentence_tokens.values() for sent in sent_set]), 7)
+        self.assertEqual(len(text_extractor.sentence_tokens), 7)
 
     def test_create_word_type_following_dict(self):
         tokens = [(('just', 'ADV'), ('three', 'NUM')), (('three', 'NUM'), ('words', 'NOUN'))]
@@ -298,11 +299,6 @@ class TestDocumentTextExtractor(TestCase):
         self.assertEqual(
             text_extractor.get_interesting_words(number_following=2), ['take', 'nothing', 'time', 'get']
         )
-
-
-
-
-
 
 
 if __name__ == '__main__':

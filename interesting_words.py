@@ -57,7 +57,7 @@ class DocumentTextExtractor:
     def __init__(self):
         self.word_tokenizer = CustomTokenizer
         self.word_tokens = []
-        self.sentence_tokens = {}
+        self.sentence_tokens = []
         self.tagged_normalized_words = []
 
     @staticmethod
@@ -66,12 +66,14 @@ class DocumentTextExtractor:
             return file.read()
 
     # TODO: directory in directories? what then?
+    # TODO: could change this so the sentences are the keys and the documents names are the values
     def get_sentence_and_work_tokens(self, directory_name):
         for file_name in os.listdir(directory_name):
             document_string = self.get_string_from_document(f'{directory_name}/{file_name}')
             tokenizer = CustomTokenizer(document_string)
             self.word_tokens += tokenizer.words
-            self.sentence_tokens[file_name] = tokenizer.sentences
+            # self.sentence_tokens{**, self.sentence_tokens}
+            self.sentence_tokens += [(file_name, sent) for sent in tokenizer.sentences]
 
     def normalize_words(self):
         word_normalizer = WordNormalizer()
