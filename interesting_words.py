@@ -20,7 +20,7 @@ import os
 from collections import defaultdict
 from string import punctuation
 
-from nltk import word_tokenize, sent_tokenize, pos_tag, FreqDist, TweetTokenizer
+from nltk import word_tokenize, sent_tokenize, pos_tag, FreqDist, TweetTokenizer, bigrams
 from nltk.corpus import stopwords
 
 
@@ -90,7 +90,28 @@ class WordNormalizer:
 
     @staticmethod
     def remove_from_tokens(tokens, remove_list):
-        return [token for token in tokens if token not in remove_list]
+        """
+        :param tokens: List of String objects
+        :param remove_list: List of String objects - tokens to remove - should be in lower case
+        :return: List of String objects corresponding to tokens - remove_list
+        """
+        return [token for token in tokens if token.lower() not in remove_list]
+
+    @staticmethod
+    def word_tagger(tokens):
+        return pos_tag(tokens, tagset='universal')
+
+    @staticmethod
+    def create_bigrams(tokens):
+        return bigrams(tokens)
+
+    @staticmethod
+    def create_word_type_following_dict(bigram_tokens):
+        words_following_dict = defaultdict(set)
+        # TODO: here you could do yield
+        for ((word, tag), (following_word, following_tag)) in bigram_tokens:
+            words_following_dict[word].add(following_tag)
+        return words_following_dict
 
 
 class WordCounter:
@@ -99,8 +120,8 @@ class WordCounter:
     def most_common_words(words, number):
         return FreqDist(words).most_common(number)
 
-    def filter(self):
-        pass
+    # def (self):
+    #     pass
 
 
 if __name__ == '__main__':

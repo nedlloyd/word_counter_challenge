@@ -56,8 +56,6 @@ class TestWordTokenizer(TestCase):
             )
 
 
-
-
 class TestWordNormalisation(TestCase):
 
     def test_remove_punctuation(self):
@@ -74,6 +72,87 @@ class TestWordNormalisation(TestCase):
         self.assertEqual(
             WordNormalizer.remove_from_tokens(tokens, remove_list),
             ["Just", "one", "line", "text", "matter"]
+        )
+
+    def test_remove_tokens_upper_case(self):
+        tokens = ["Just", "one", "line", "-", "Of", "text", "Doesn't", "matter", "."]
+        remove_list = ['of', "doesn't"] + list(punctuation)
+        self.assertEqual(
+            WordNormalizer.remove_from_tokens(tokens, remove_list),
+            ["Just", "one", "line", "text", "matter"]
+        )
+
+    def test_tag_word_types(self):
+        tokens = ['car']
+        self.assertEqual(
+            WordNormalizer.word_tagger(tokens),
+            [('car', 'NOUN')]
+        )
+
+    def test_tag_word_types_sentence(self):
+        tokens = ["Just", "one", "line", "of", "text", "is", "all"]
+        tagged_words = [
+            ('Just', 'ADV'),
+            ('one', 'NUM'),
+            ('line', 'NOUN'),
+            ('of', 'ADP'),
+            ('text', 'NOUN'),
+            ("is", 'VERB'),
+            ('all', 'DET')
+        ]
+        self.assertEqual(
+            WordNormalizer.word_tagger(tokens),
+            tagged_words
+        )
+
+    def test_create_bigrams(self):
+        tokens = ['just', 'three', 'words']
+        token_bigrams = [("just", "three"), ("three", "words")]
+        self.assertEqual(
+            list(WordNormalizer.create_bigrams(tokens)),
+            token_bigrams
+        )
+
+    def test_create_bigrams_sentence(self):
+        tokens = ["Just", "one", "line", "of", "text", "is", "all"]
+        token_bigrams = [
+            ("Just", "one"), ("one", "line"), ("line", "of"), ("of", "text"), ("text", "is"), ("is", "all")
+        ]
+        self.assertEqual(
+            list(WordNormalizer.create_bigrams(tokens)),
+            token_bigrams
+        )
+
+    def test_create_bigrams_word_type_pairs(self):
+        tokens = [('just', 'ADV'), ('three', 'NUM'), ('words', 'NOUN')]
+        token_bigrams = [(('just', 'ADV'), ('three', 'NUM')), (('three', 'NUM'), ('words', 'NOUN'))]
+        self.assertEqual(
+            list(WordNormalizer.create_bigrams(tokens)),
+            token_bigrams
+        )
+
+    def test_create_word_type_following_dict(self):
+        tokens = [(('just', 'ADV'), ('three', 'NUM')), (('three', 'NUM'), ('words', 'NOUN'))]
+        following_dict = {'just': {'NUM'}, 'three': {'NOUN'}}
+        self.assertEqual(
+            dict(WordNormalizer.create_word_type_following_dict(tokens)),
+            following_dict
+        )
+
+    def test_create_word_type_following_dict_multiple_following(self):
+        """
+        Test when a word is followed by more than one different kinds of words
+        """
+        tokens = [
+            (('just', 'ADV'), ('three', 'NUM')),
+            (('three', 'NUM'), ('words', 'NOUN')),
+            (('words', 'NOUN'), ('just', 'ADV')),
+            (('just', 'ADV'), ('say', 'VERB'))
+        ]
+        following_dict = {'just': {'NUM', 'VERB'}, 'three': {'NOUN'}, 'words': {'ADV'}}
+        self.assertEqual(
+            dict(WordNormalizer.create_word_type_following_dict(tokens)),
+            following_dict
         )
 
 
