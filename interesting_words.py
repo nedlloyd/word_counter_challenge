@@ -61,7 +61,7 @@ class DocumentTextExtractor:
         :return: List of Strings representing interesting words.
         """
         self._extract_sentence_and_work_tokens(self._directory_name)
-        tagged_normalized_words = self._normalize_words()
+        tagged_normalized_words = WordNormalizer().normalize_words(self._word_tokens)
         following_dict = self._create_word_type_following_dict(tagged_normalized_words)
         interesting_words = self._find_number_follow_types(following_dict, number_following)
         return WordNormalizer.remove_from_tokens(interesting_words, stopwords.words('english'))
@@ -86,14 +86,6 @@ class DocumentTextExtractor:
             document_string = self._get_string_from_document(f'{directory_name}/{file_name}')
             self._word_tokens += [w.lower() for w in self.tokenizer.tokenize(document_string)]
             self._sentence_tokens += [(file_name, sent) for sent in sent_tokenize(document_string)]
-
-    def _normalize_words(self):
-        """
-        Uses WordNormalizer class to normalize words.
-        :return: List of bigrams of words tagged by word type
-        """
-        word_normalizer = WordNormalizer()
-        return word_normalizer.normalize_words(self._word_tokens)
 
     @staticmethod
     def _create_word_type_following_dict(bigram_tokens):
