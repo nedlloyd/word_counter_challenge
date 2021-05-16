@@ -9,11 +9,14 @@ from nltk.corpus import stopwords
 
 class WordContextFinder:
 
-    def __init__(self, sentences, words):
-        self.contexts = self.get_word_contexts(sentences, words)
-
     @staticmethod
     def get_word_contexts(sentences, words):
+        """
+        Get sentence context for each word in sentence
+        :param sentences: list of tuples of form (document_name, sentence)
+        :param words: list of words Strings
+        :return: dict of form {word - String: ['sentence contexts']}
+        """
         context_dict = defaultdict(list)
         for (document, sentence) in sentences:
             intersection = set(words).intersection(set(sentence.split()))
@@ -47,8 +50,8 @@ class DocumentTextExtractor:
     def export_interesting_words_as_csv(self):
         interesting_words = self.get_interesting_words(number_following=self._number_following)
         most_common_10 = WordCounter.most_common_words(self._word_tokens, interesting_words, self._most_common_number)
-        wcf = WordContextFinder(self._sentence_tokens, most_common_10)
-        data_tabulate = self._convert_to_csv_form(wcf.contexts)
+        contexts = WordContextFinder.get_word_contexts(self._sentence_tokens, most_common_10)
+        data_tabulate = self._convert_to_csv_form(contexts)
         self._export_csv(data_tabulate)
 
     def get_interesting_words(self, number_following=4):

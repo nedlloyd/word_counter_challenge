@@ -111,8 +111,8 @@ class TestWordContextFinder(TestCase):
             ('text_1', 'as the evening is spread out against the sky')
         ]
         words = ['evening']
-        wcf = WordContextFinder(sentences, words)
-        self.assertEqual(dict(wcf.contexts), {'evening': ['text_1: as the evening is spread out against the sky']})
+        contexts = WordContextFinder.get_word_contexts(sentences, words)
+        self.assertEqual(dict(contexts), {'evening': ['text_1: as the evening is spread out against the sky']})
 
     def test_multiple_sentences(self):
         sentences = [
@@ -122,8 +122,8 @@ class TestWordContextFinder(TestCase):
             ('text_1', 'through half deserted streets')
         ]
         words = ['us']
-        wcf = WordContextFinder(sentences, words)
-        self.assertEqual(dict(wcf.contexts), {'us': ['text_1: let us go then', 'text_1: let us go']})
+        contexts = WordContextFinder.get_word_contexts(sentences, words)
+        self.assertEqual(dict(contexts), {'us': ['text_1: let us go then', 'text_1: let us go']})
 
     def test_duplicate_sentences(self):
         sentences = [
@@ -133,9 +133,9 @@ class TestWordContextFinder(TestCase):
             ('text_1', 'through half deserted streets')
         ]
         words = ['us']
-        wcf = WordContextFinder(sentences, words)
+        contexts = WordContextFinder.get_word_contexts(sentences, words)
         self.assertEqual(
-            dict(wcf.contexts),
+            dict(contexts),
             {'us': ['text_1: let us go', 'text_1: let us go']}
         )
 
@@ -147,8 +147,8 @@ class TestWordContextFinder(TestCase):
             ('text_2', 'through half deserted streets')
         ]
         words = ['us']
-        wcf = WordContextFinder(sentences, words)
-        self.assertEqual(dict(wcf.contexts), {'us': ['text_1: let us go then', 'text_2: let us go']})
+        contexts = WordContextFinder.get_word_contexts(sentences, words)
+        self.assertEqual(dict(contexts), {'us': ['text_1: let us go then', 'text_2: let us go']})
 
     def test_multiple_documents_same_sentence(self):
         sentences = [
@@ -158,9 +158,9 @@ class TestWordContextFinder(TestCase):
             ('text_2', 'through half deserted streets')
         ]
         words = ['us']
-        wcf = WordContextFinder(sentences, words)
+        contexts = WordContextFinder.get_word_contexts(sentences, words)
         self.assertEqual(
-            dict(wcf.contexts),
+            dict(contexts),
             {'us': ['text_1: let us go', 'text_2: let us go']}
         )
 
@@ -172,9 +172,9 @@ class TestWordContextFinder(TestCase):
             ('text_1', 'let us go'), ('text_1', 'through half deserted streets')
         ]
         words = ['us', 'evening']
-        wcf = WordContextFinder(sentences, words)
+        contexts = WordContextFinder.get_word_contexts(sentences, words)
         self.assertEqual(
-            dict(wcf.contexts),
+            dict(contexts),
             {
                 'us': ['text_1: let us go then', 'text_1: let us go'],
                 'evening': ['text_1: as the evening is spread out against the sky']
@@ -189,9 +189,9 @@ class TestWordContextFinder(TestCase):
             ('text_2', 'through half deserted streets'),
         ]
         words = ['us', 'evening']
-        wcf = WordContextFinder(sentences, words)
+        contexts = WordContextFinder.get_word_contexts(sentences, words)
         self.assertEqual(
-            dict(wcf.contexts),
+            dict(contexts),
             {
                 'us': ['text_1: let us go then', 'text_2: let us go'],
                 'evening': ['text_1: as the evening is spread out against the sky']
