@@ -60,7 +60,7 @@ class DocumentTextExtractor:
         :param number_following: Int - minimum number required of following word kinds.
         :return: List of Strings representing interesting words.
         """
-        self._set_sentence_and_work_tokens(self._directory_name)
+        self._extract_sentence_and_work_tokens(self._directory_name)
         tagged_normalized_words = self._normalize_words()
         following_dict = self._create_word_type_following_dict(tagged_normalized_words)
         interesting_words = self._find_number_follow_types(following_dict, number_following)
@@ -78,7 +78,7 @@ class DocumentTextExtractor:
 
     # TODO: directory in directories? what then?
     # TODO: could change this so the sentences are the keys and the documents names are the values
-    def _set_sentence_and_work_tokens(self, directory_name):
+    def _extract_sentence_and_work_tokens(self, directory_name):
         """
         Sets _word_tokens variable as list of word Strings.
         Sets _sentence_tokens variable as list of sentence Strings.
@@ -141,6 +141,10 @@ class DocumentTextExtractor:
         """
         df = pd.DataFrame(csv_data)
         df.to_csv('test.csv', index=False, header=['word', 'context'])
+
+
+# class GetInterestingWords:
+
 
 
 class WordNormalizer:
