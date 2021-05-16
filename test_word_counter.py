@@ -1,8 +1,6 @@
 from string import punctuation
 from unittest import main, TestCase
 
-from nltk import TweetTokenizer
-
 from interesting_words import WordCounter, WordNormalizer, WordContextFinder, DocumentTextExtractor
 
 
