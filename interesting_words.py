@@ -25,8 +25,10 @@ import os
 from collections import defaultdict
 from string import punctuation
 
+import pandas as pd
 from nltk import word_tokenize, sent_tokenize, pos_tag, FreqDist, TweetTokenizer, bigrams
 from nltk.corpus import stopwords
+from tabulate import tabulate
 
 
 class WordContextFinder:
@@ -58,6 +60,18 @@ class DocumentTextExtractor:
         self.word_tokens = []
         self.sentence_tokens = []
         self.tagged_normalized_words = []
+
+    def print_interesting_word_table(self, directory_name, number_following):
+        self.get_sentence_and_work_tokens(directory_name)
+        self.normalize_words()
+        interesting_words = self.get_interesting_words(number_following=number_following)
+        most_common_10 = WordCounter.most_common_words(interesting_words, 10)
+        print(f'most_common_10: {most_common_10}')
+        wcf = WordContextFinder(self.sentence_tokens, most_common_10)
+        # dt = pd.DataFrame.from_dict(wcf.contexts, orient='index')
+        # # print(dt)
+        data_tabulate = self.convert_to_tabulate_form(wcf.contexts)
+        self.tabulate_data(data_tabulate)
 
     @staticmethod
     def get_string_from_document(document_name):
@@ -101,6 +115,14 @@ class DocumentTextExtractor:
     @staticmethod
     def find_number_follow_types(words_following_dict, number):
         return [word for word, follow_types in words_following_dict.items() if len(follow_types) >= number]
+
+    @staticmethod
+    def convert_to_tabulate_form(word_context_dict):
+        return [[k, v] for k, v in word_context_dict.items()]
+
+    @staticmethod
+    def tabulate_data(table_date):
+        print(tabulate(table_date, ['word', 'context']))
 
 
 # TODO: make these more generic
