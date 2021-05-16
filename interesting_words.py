@@ -65,7 +65,7 @@ class DocumentTextExtractor:
         self.get_sentence_and_work_tokens(directory_name)
         self.normalize_words()
         interesting_words = self.get_interesting_words(number_following=number_following)
-        most_common_10 = WordCounter.most_common_words(interesting_words, 10)
+        most_common_10 = WordCounter.most_common_words(self.word_tokens, interesting_words, 10)
         print(f'most_common_10: {most_common_10}')
         wcf = WordContextFinder(self.sentence_tokens, most_common_10)
         # dt = pd.DataFrame.from_dict(wcf.contexts, orient='index')
