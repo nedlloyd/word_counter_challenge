@@ -32,12 +32,6 @@ from tabulate import tabulate
 
 
 class WordContextFinder:
-    # TODO: must also find document...
-    #   - tag words with document?
-    #   - tag words with sentence index
-    #   - how easy would it be to map each word to its sentences
-    #   - perhaps what we need to do is to map each sentence to a document
-    #   - what about words that appear in a sentence which starts on one doc but the word is in the other doc
 
     def __init__(self, sentences, words):
         self.contexts = self.get_word_contexts(sentences, words)
@@ -85,22 +79,18 @@ class DocumentTextExtractor:
             document_string = self.get_string_from_document(f'{directory_name}/{file_name}')
             tokenizer = CustomTokenizer(document_string)
             self.word_tokens += tokenizer.words
-            # self.sentence_tokens{**, self.sentence_tokens}
             self.sentence_tokens += [(file_name, sent) for sent in tokenizer.sentences]
 
     def normalize_words(self):
         word_normalizer = WordNormalizer()
         self.tagged_normalized_words = word_normalizer.normalize_words(self.word_tokens)
 
-    def get_interesting_words(self, number_following=3):
+    def get_interesting_words(self, number_following=4):
         # create word_following_dict
         following_dict = self.create_word_type_following_dict(self.tagged_normalized_words)
-        # print(f"take: {following_dict['take']}")
-        # print(f"nothing: {following_dict['nothing']}")
-        # print(f"time: {following_dict['time']}")
-        # print(f"get: {following_dict['get']}")
         # get all words that have three or more different followers
         interesting_words = self.find_number_follow_types(following_dict, number_following)
+        # print(f'interesting-words: {}')
         # strip out the stop words
         return WordNormalizer.remove_from_tokens(interesting_words, stopwords.words('english'))
 
