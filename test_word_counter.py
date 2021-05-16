@@ -32,15 +32,6 @@ class TestWordNormalisation(TestCase):
             ["Just", "one", "line", "text", "matter"]
         )
 
-    # TODO: do we want to do this?
-    # def test_remove_tokens_contains_digits(self):
-    #     tokens = ["Just", 1, "line", "-", "Of", "text", "Doesn't", "matter", "."]
-    #     remove_list = ['of', "doesn't"] + list(punctuation)
-    #     self.assertEqual(
-    #         WordNormalizer.remove_from_tokens(tokens, remove_list),
-    #         ["Just", 1, "line", "text", "matter"]
-    #     )
-
     def test_tag_word_types(self):
         tokens = ['car']
         self.assertEqual(
