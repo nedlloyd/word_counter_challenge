@@ -212,44 +212,40 @@ class TestDocumentTextExtractor(TestCase):
 
     def test_single_document_get_text(self):
         # TODO this could be accomplished by writting temporary file
-        document_string = DocumentTextExtractor._get_string_from_document('tests/test_directory/test_text_2.txt')
+        document_string = DocumentTextExtractor._get_string_from_document('tests_files/test_directory/test_text_2.txt')
         self.assertEqual(
             document_string, "quite simply the second document.  and that, for now, is all you're getting - YES!"
         )
 
-    # def test_single_document_no_file(self):
-    #     # TODO this could be accomplished by writting temporary file
-    #     document_string = DocumentTextExtractor._get_string_from_document('tests/test_directory/no_file.txt')
-
     def test_multiple_documents_get_word_tokens(self):
         text_extractor = DocumentTextExtractor('test_directory', 5, 10)
-        text_extractor._extract_sentence_and_work_tokens('tests/test_directory')
+        text_extractor._extract_sentence_and_work_tokens('tests_files/test_directory')
         self.assertEqual(len(text_extractor._word_tokens), 58)
 
     def test_document_get_word_tokens(self):
         text_extractor = DocumentTextExtractor('test_directory', 5, 10)
-        text_extractor._extract_sentence_and_work_tokens('tests/test_directory_single_file')
+        text_extractor._extract_sentence_and_work_tokens('tests_files/test_directory_single_file')
         self.assertEqual(len(text_extractor._word_tokens), 7)
 
     def test_splits_sentences_by_document(self):
         text_extractor = DocumentTextExtractor('test_directory', 5, 10)
-        text_extractor._extract_sentence_and_work_tokens('tests/test_directory_single_file')
+        text_extractor._extract_sentence_and_work_tokens('tests_files/test_directory_single_file')
         self.assertEqual(text_extractor._sentence_tokens, [('single_file.txt', 'one, two, three and four')])
 
     def test_gets_num_of_sentences(self):
         text_extractor = DocumentTextExtractor('test_directory', 5, 10)
-        text_extractor._extract_sentence_and_work_tokens('tests/test_directory_single_file')
+        text_extractor._extract_sentence_and_work_tokens('tests_files/test_directory_single_file')
         self.assertEqual(len(text_extractor._sentence_tokens), 1)
 
     def test_splits_sentences_by_multiple_docs(self):
         text_extractor = DocumentTextExtractor('test_directory', 5, 10)
-        text_extractor._extract_sentence_and_work_tokens('tests/test_directory')
+        text_extractor._extract_sentence_and_work_tokens('tests_files/test_directory')
         self.assertEqual(text_extractor._sentence_tokens[0], ('test_text_2.txt', 'quite simply the second document.'))
         self.assertEqual(text_extractor._sentence_tokens[6], ('test_text_1.txt', 'way-too-nice.'))
 
     def test_gets_num_of_sentences_multiple_docs(self):
         text_extractor = DocumentTextExtractor('test_directory', 5, 10)
-        text_extractor._extract_sentence_and_work_tokens('tests/test_directory')
+        text_extractor._extract_sentence_and_work_tokens('tests_files/test_directory')
         self.assertEqual(len(text_extractor._sentence_tokens), 7)
 
     def test_create_word_type_following_dict(self):
@@ -296,8 +292,8 @@ class TestDocumentTextExtractor(TestCase):
         )
 
     def test_get_interesting_words(self):
-        text_extractor = DocumentTextExtractor('tests/test_extractor', 5, 10)
-        text_extractor._extract_sentence_and_work_tokens('tests/test_extractor')
+        text_extractor = DocumentTextExtractor('tests_files/test_extractor', 5, 10)
+        text_extractor._extract_sentence_and_work_tokens('tests_files/test_extractor')
         self.assertEqual(
             text_extractor.get_interesting_words(number_following=2), ['take', 'nothing', 'time', 'whenever', 'get']
         )
