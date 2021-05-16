@@ -42,6 +42,7 @@ class DocumentTextExtractor:
         self._most_common_number = most_common_number
         self._word_tokens = []
         self._sentence_tokens = []
+        self.tokenizer = TweetTokenizer()
 
     def export_interesting_words_as_csv(self):
         interesting_words = self.get_interesting_words(number_following=self._number_following)
@@ -82,9 +83,8 @@ class DocumentTextExtractor:
         """
         for file_name in os.listdir(directory_name):
             document_string = self._get_string_from_document(f'{directory_name}/{file_name}')
-            tokenizer = CustomTokenizer(document_string)
-            self._word_tokens += tokenizer.words
-            self._sentence_tokens += [(file_name, sent) for sent in tokenizer.sentences]
+            self._word_tokens += self.tokenizer.tokenize(document_string)
+            self._sentence_tokens += [(file_name, sent) for sent in sent_tokenize(document_string)]
 
     def _normalize_words(self):
         """
@@ -172,24 +172,6 @@ class WordNormalizer:
         no_punct_tokens = self.remove_from_tokens(word_tokens, list(punctuation) + ['’', '—'])
         tagged_tokens = self.word_tagger(no_punct_tokens)
         return bigrams(tagged_tokens)
-
-
-# TODO: maybe make this follow the same pattern as normal tokenizers
-#  - maybe even get rid of it entirely
-class CustomTokenizer:
-
-    def __init__(self, text):
-        word_tokenizer = TweetTokenizer()
-        self.sentences = self.tokenize_into_sentences(text)
-        self.words = self.tokenize(text, word_tokenizer)
-
-    @staticmethod
-    def tokenize_into_sentences(text):
-        return sent_tokenize(text)
-
-    @staticmethod
-    def tokenize(text, word_tokenizer):
-        return word_tokenizer.tokenize(text)
 
 
 class WordCounter:

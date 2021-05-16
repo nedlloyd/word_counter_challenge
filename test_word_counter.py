@@ -3,57 +3,7 @@ from unittest import main, TestCase
 
 from nltk import TweetTokenizer
 
-from interesting_words import WordCounter, WordNormalizer, CustomTokenizer, WordContextFinder, DocumentTextExtractor
-
-
-class TestCustomTokenizer(TestCase):
-
-    def test_keeps_words_with_apostrophes(self):
-        text = "Just one line - of text doesn't matter."
-        self.assertEqual(
-            CustomTokenizer(text).words,
-            ["Just", "one", "line", "-", "of", "text", "doesn't", "matter", "."]
-        )
-
-    def test_tokenize_words(self):
-        text = "Just one line of text."
-        self.assertEqual(
-            CustomTokenizer(text).words,
-            ["Just", "one", "line", "of", "text", "."]
-        )
-
-    def test_tokenize_single_sentence(self):
-        text = "Just one line of text."
-        self.assertEqual(
-            CustomTokenizer(text).sentences,
-            ["Just one line of text."]
-        )
-
-    def test_tokenize_sentences_test_text_1(self):
-        with open('tests/test_directory/test_text_1.txt') as file:
-            text = file.read()
-            sentence_tokens = [
-                "he doesn't even know.",
-                "and a list of movies: '2001', 'Computer Chess', 'The Red Shoes'.",
-                "The schools' movie is nice.",
-                'Too nice even.',
-                'way-too-nice.'
-            ]
-            self.assertEqual(
-                CustomTokenizer(text).sentences,
-                sentence_tokens
-            )
-
-    def test_tokenize_sentences_test_text_2(self):
-        with open('tests/test_directory/test_text_2.txt') as file:
-            text = file.read()
-            sentence_tokens = [
-                "quite simply the second document.", "and that, for now, is all you're getting - YES!"
-            ]
-            self.assertEqual(
-                CustomTokenizer(text).sentences,
-                sentence_tokens
-            )
+from interesting_words import WordCounter, WordNormalizer, WordContextFinder, DocumentTextExtractor
 
 
 class TestWordNormalisation(TestCase):
