@@ -7,25 +7,6 @@ from nltk import sent_tokenize, pos_tag, FreqDist, TweetTokenizer, bigrams
 from nltk.corpus import stopwords
 
 
-class WordContextFinder:
-
-    @staticmethod
-    def get_word_contexts(sentences, words):
-        """
-        Get sentence context for each word in sentence
-        :param sentences: list of tuples of form (document_name, sentence)
-        :param words: list of words Strings
-        :return: dict of form {word - String: ['sentence contexts']}
-        """
-        context_dict = defaultdict(list)
-        lower_case_words = [w.lower() for w in words]
-        for (document, sentence) in sentences:
-            intersection = set(lower_case_words).intersection(set([w.lower() for w in sentence.split()]))
-            for word in intersection:
-                context_dict[word].append(f'{document}: {sentence}')
-        return context_dict
-
-
 class DocumentTextExtractor:
 
     def __init__(self, directory_name, number_following, most_common_number):
@@ -130,6 +111,25 @@ class DocumentTextExtractor:
         """
         df = pd.DataFrame(csv_data)
         df.to_csv('test.csv', index=False, header=['word', 'context'])
+
+
+class WordContextFinder:
+
+    @staticmethod
+    def get_word_contexts(sentences, words):
+        """
+        Get sentence context for each word in sentence
+        :param sentences: list of tuples of form (document_name, sentence)
+        :param words: list of words Strings
+        :return: dict of form {word - String: ['sentence contexts']}
+        """
+        context_dict = defaultdict(list)
+        lower_case_words = [w.lower() for w in words]
+        for (document, sentence) in sentences:
+            intersection = set(lower_case_words).intersection(set([w.lower() for w in sentence.split()]))
+            for word in intersection:
+                context_dict[word].append(f'{document}: {sentence}')
+        return context_dict
 
 
 class WordNormalizer:
