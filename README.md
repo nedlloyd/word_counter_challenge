@@ -26,8 +26,8 @@ ipython
 #### 'documents' is where the directory containing documents is
 #### 6 is the number of following word types. 
 #### 10 means the most common 10 interesting words.
-from interesting_words import DocumentTextExtractor, download_nltk_data
-download_nltk_data()
-extractor = DocumentTextExtractor('documents', 6, 10)
-extractor.export_interesting_words_as_csv()
+from interesting_words import DocumentTextExtractor, download_nltk_data  
+download_nltk_data()  
+extractor = DocumentTextExtractor('documents', 6, 10)  
+extractor.export_interesting_words_as_csv()  
 
