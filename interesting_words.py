@@ -31,7 +31,7 @@ class DocumentTextExtractor:
         self.sentence_tokens = []
         self.tagged_normalized_words = []
 
-    def print_interesting_word_table(self, directory_name, number_following):
+    def export_interesting_words_as_csv(self, directory_name, number_following):
         self.set_sentence_and_work_tokens(directory_name)
         self.normalize_words()
         interesting_words = self.get_interesting_words(number_following=number_following)
