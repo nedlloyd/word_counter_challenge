@@ -92,8 +92,6 @@ class DocumentTextExtractor:
         df.to_csv('test.csv', index=False, header=['word', 'context'])
 
 
-# TODO: make these more generic
-#  allow it to be called a bit more genrically
 class WordNormalizer:
 
     @staticmethod
