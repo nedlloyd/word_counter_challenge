@@ -144,7 +144,7 @@ class TestWordCounter(TestCase):
 
     def test_most_common_word(self):
         tokens = ["Just", "one", "line", "text", "matter", 'matter']
-        self.assertEqual(WordCounter.most_common_words(tokens, 1), [('matter', 2)])
+        self.assertEqual(WordCounter.most_common_words(tokens, tokens, 1), ['matter'])
 
     def test_most_common_word_multiple(self):
         tokens = [
@@ -152,8 +152,29 @@ class TestWordCounter(TestCase):
             'this', 'and', 'that', 'words', 'more', 'keep', 'going', 'text', 'line', 'line'
         ]
         self.assertEqual(
-            WordCounter.most_common_words(tokens, 3),
-            [('line', 3), ('matter', 3), ('words', 3),]
+            WordCounter.most_common_words(tokens, tokens, 3),
+            ['line', 'matter', 'words']
+        )
+
+    def test_most_common_of_set(self):
+        tokens = [
+            "Just", "one", "line", "text", "matter", 'matter', 'words', 'words', 'matter',
+            'this', 'and', 'that', 'words', 'more', 'keep', 'going', 'text', 'line', 'line',
+        ]
+        self.assertEqual(
+            WordCounter.most_common_words(tokens, ['words', 'matter'], 3),
+            ['matter', 'words']
+        )
+
+    def test_filter_out_most_common(self):
+        tokens = [
+            "Just", "one", "line", "text", "matter", 'matter', 'words', 'words', 'matter',
+            'this', 'and', 'that', 'words', 'more', 'keep', 'going', 'text', 'line', 'line',
+            'words', 'words', 'matter', 'matter', 'just', 'keep', 'keep'
+        ]
+        self.assertEqual(
+            WordCounter.most_common_words(tokens, ['just'], 2),
+            ['just']
         )
 
 

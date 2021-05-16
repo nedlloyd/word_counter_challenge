@@ -175,8 +175,9 @@ class CustomTokenizer:
 class WordCounter:
 
     @staticmethod
-    def most_common_words(words, number):
-        return FreqDist(words).most_common(number)
+    def most_common_words(all_tokens, interesting_words, number):
+        freq_dist = FreqDist([t for t in all_tokens if t in interesting_words]).most_common(number)
+        return sorted(w for (w, freq) in freq_dist)
 
 
 
