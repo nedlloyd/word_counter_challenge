@@ -25,48 +25,83 @@ class WordContextFinder:
 # TODO: error handling on opening files
 class DocumentTextExtractor:
 
-    def __init__(self):
-        self.word_tokens = []
-        self.sentence_tokens = []
-        self.tagged_normalized_words = []
+    def __init__(self, directory_name, number_following, most_common_number):
+        """
+        Reads all documents in specified directory.
+        Finds words with >= number_following types of following words.
+            i.e. If a word is only followed by verbs and number_following > 1 then it will not be returned
+                If a word is followed by nouns and very and number_following = 2 then it will be returned
+        Option to export result to csv.
+        :param directory_name: String - name of directory where files to be read are
+        :param number_following: Int - Int - minimum number required of following word kinds (Nouns, verbs etc.)
+            to meet criteria.
+        :param most_common_number: Int - number of results returned.
+        """
+        self._directory_name = directory_name
+        self._number_following = number_following
+        self._most_common_number = most_common_number
+        self._word_tokens = []
+        self._sentence_tokens = []
 
-    def export_interesting_words_as_csv(self, directory_name, number_following):
-        self.set_sentence_and_work_tokens(directory_name)
-        self.normalize_words()
-        interesting_words = self.get_interesting_words(number_following=number_following)
-        most_common_10 = WordCounter.most_common_words(self.word_tokens, interesting_words, 10)
-        wcf = WordContextFinder(self.sentence_tokens, most_common_10)
-        data_tabulate = self.convert_to_csv_form(wcf.contexts)
-        self.export_csv(data_tabulate)
+    def export_interesting_words_as_csv(self):
+        interesting_words = self.get_interesting_words(number_following=self._number_following)
+        most_common_10 = WordCounter.most_common_words(self._word_tokens, interesting_words, self._most_common_number)
+        wcf = WordContextFinder(self._sentence_tokens, most_common_10)
+        data_tabulate = self._convert_to_csv_form(wcf.contexts)
+        self._export_csv(data_tabulate)
+
+    def get_interesting_words(self, number_following=4):
+        """
+        Finds words with >= number_following types (Nouns, Verbs etc.) of following words.
+        :param number_following: Int - minimum number required of following word kinds.
+        :return: List of Strings representing interesting words.
+        """
+        self._set_sentence_and_work_tokens(self._directory_name)
+        tagged_normalized_words = self._normalize_words()
+        following_dict = self._create_word_type_following_dict(tagged_normalized_words)
+        interesting_words = self._find_number_follow_types(following_dict, number_following)
+        return WordNormalizer.remove_from_tokens(interesting_words, stopwords.words('english'))
 
     @staticmethod
-    def get_string_from_document(document_name):
-        with open(document_name) as file:
+    def _get_string_from_document(document_path):
+        """
+        Gets document as String.
+        :param document_path: String representing path to document.
+        :return: String - representing file content.
+        """
+        with open(document_path) as file:
             return file.read()
 
     # TODO: directory in directories? what then?
     # TODO: could change this so the sentences are the keys and the documents names are the values
-    def set_sentence_and_work_tokens(self, directory_name):
+    def _set_sentence_and_work_tokens(self, directory_name):
+        """
+        Sets _word_tokens variable as list of word Strings.
+        Sets _sentence_tokens variable as list of sentence Strings.
+        :param directory_name: String representing directory name.
+        """
         for file_name in os.listdir(directory_name):
-            document_string = self.get_string_from_document(f'{directory_name}/{file_name}')
+            document_string = self._get_string_from_document(f'{directory_name}/{file_name}')
             tokenizer = CustomTokenizer(document_string)
-            self.word_tokens += tokenizer.words
-            self.sentence_tokens += [(file_name, sent) for sent in tokenizer.sentences]
+            self._word_tokens += tokenizer.words
+            self._sentence_tokens += [(file_name, sent) for sent in tokenizer.sentences]
 
-    def normalize_words(self):
+    def _normalize_words(self):
+        """
+        Uses WordNormalizer class to normalize words.
+        :return: List of bigrams of words tagged by word type
+        """
         word_normalizer = WordNormalizer()
-        self.tagged_normalized_words = word_normalizer.normalize_words(self.word_tokens)
-
-    def get_interesting_words(self, number_following=4):
-        # create word_following_dict
-        following_dict = self.create_word_type_following_dict(self.tagged_normalized_words)
-        # get all words that have three or more different followers
-        interesting_words = self.find_number_follow_types(following_dict, number_following)
-        # strip out the stop words
-        return WordNormalizer.remove_from_tokens(interesting_words, stopwords.words('english'))
+        return word_normalizer.normalize_words(self._word_tokens)
 
     @staticmethod
-    def create_word_type_following_dict(bigram_tokens):
+    def _create_word_type_following_dict(bigram_tokens):
+        """
+        :param bigram_tokens: List of bigrams of words tagged by word type
+            e.g. [((hammer, NOUN), (hard, ADJECTIVE))]
+        :return: Dict with of key of words and values of a set of following type words
+            e.g. {'phone': {'NOUN', 'VERB'}}
+        """
         words_following_dict = defaultdict(set)
         # TODO: here you could do yield
         for ((word, tag), (following_word, following_tag)) in bigram_tokens:
@@ -74,11 +109,22 @@ class DocumentTextExtractor:
         return words_following_dict
 
     @staticmethod
-    def find_number_follow_types(words_following_dict, number):
+    def _find_number_follow_types(words_following_dict, number):
+        """
+        :param words_following_dict: Dict with of key of words and values of a set of following type words
+            e.g. {'phone': {'NOUN', 'VERB'}}
+        :param number: Int - minimum number of follow types
+        :return: list  - of word Strings corresponding to words with >= number of following type words
+        """
         return [word for word, follow_types in words_following_dict.items() if len(follow_types) >= number]
 
     @staticmethod
-    def convert_to_csv_form(word_context_dict):
+    def _convert_to_csv_form(word_context_dict):
+        """
+        :param word_context_dict: dict of word contexts in form: {word - String: ['sentence contexts']}
+        :return: list of word contexts in form:
+            [['word', 'sentence context 1'], ['', 'sentence context 2'], , ['word 2', 'sentence context 1']]
+        """
         csv_format = []
         for word, sentences in word_context_dict.items():
             for i, sentence in enumerate(sentences):
@@ -86,7 +132,10 @@ class DocumentTextExtractor:
         return csv_format
 
     @staticmethod
-    def export_csv(csv_data):
+    def _export_csv(csv_data):
+        """
+        export data to csv
+        """
         df = pd.DataFrame(csv_data)
         df.to_csv('test.csv', index=False, header=['word', 'context'])
 
