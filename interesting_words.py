@@ -26,14 +26,13 @@ class DocumentTextExtractor:
 
     def __init__(self, directory_name, number_following, most_common_number):
         """
-        Reads all documents in specified directory.
-        Finds words with >= number_following types of following words.
-            i.e. If a word is only followed by verbs and number_following > 1 then it will not be returned
-                If a word is followed by nouns and very and number_following = 2 then it will be returned
-        Option to export result to csv.
-        :param directory_name: String - name of directory where files to be read are
-        :param number_following: Int - Int - minimum number required of following word kinds (Nouns, verbs etc.)
-            to meet criteria.
+        - Reads all documents in specified directory.
+        - Find all types (nouns, verbs etc.) of words that follow each word.
+        - Finds words with at least number_following number of different following types
+        - returns most_common_number of most the above words
+        - Option to export result as csv.
+        :param directory_name: String - name of directory where files to be read are.
+        :param number_following: Int - minimum number required of following word kinds (Nouns, verbs etc.).
         :param most_common_number: Int - number of results returned.
         """
         self._directory_name = directory_name
@@ -74,8 +73,8 @@ class DocumentTextExtractor:
 
     def _extract_sentence_and_work_tokens(self, directory_name):
         """
-        Sets _word_tokens variable as list of word Strings in lower case.
-        Sets _sentence_tokens variable as list of sentence Strings.
+        Sets _word_tokens variable as list of Strings representing words in lower case.
+        Sets _sentence_tokens variable as list of Strings representing sentences.
         :param directory_name: String representing directory name.
         """
         for file_name in os.listdir(directory_name):
@@ -86,9 +85,9 @@ class DocumentTextExtractor:
     @staticmethod
     def _create_word_type_following_dict(bigram_tokens):
         """
-        :param bigram_tokens: List of bigrams of words tagged by word type
+        :param bigram_tokens: List of tuples representing bigrams containing of tuples of word and type
             e.g. [((hammer, NOUN), (hard, ADJECTIVE))]
-        :return: Dict with of key of words and values of a set of following type words
+        :return: Dict with key of words and values of a set of following type words
             e.g. {'phone': {'NOUN', 'VERB'}}
         """
         words_following_dict = defaultdict(set)
@@ -99,10 +98,10 @@ class DocumentTextExtractor:
     @staticmethod
     def _find_number_follow_types(words_following_dict, number):
         """
-        :param words_following_dict: Dict with of key of words and values of a set of following type words
+        :param words_following_dict: Dict with key of words and values of a set of following type words
             e.g. {'phone': {'NOUN', 'VERB'}}
         :param number: Int - minimum number of follow types
-        :return: list  - of word Strings corresponding to words with >= number of following type words
+        :return: list - Strings corresponding to words with follow types >= number
         """
         return [word for word, follow_types in words_following_dict.items() if len(follow_types) >= number]
 
