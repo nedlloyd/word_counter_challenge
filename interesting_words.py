@@ -106,6 +106,14 @@ class DocumentTextExtractor:
         return [word for word, follow_types in words_following_dict.items() if len(follow_types) >= number]
 
     @staticmethod
+    def convert_to_csv_form(word_context_dict):
+        csv_format = []
+        for word, sentences in word_context_dict.items():
+            for i, sentence in enumerate(sentences):
+                csv_format.append([word, sentence] if i == 0 else ['', sentence])
+        return csv_format
+
+    @staticmethod
     def convert_to_tabulate_form(word_context_dict):
         return [[k, v] for k, v in word_context_dict.items()]
 

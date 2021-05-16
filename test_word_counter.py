@@ -384,6 +384,27 @@ class TestDocumentTextExtractor(TestCase):
             ]
         )
 
+    def test_convert_to_csv_format(self):
+        context_dict = {'us': ['text_1: let us go then', 'text_1: let us go']}
+        csv_format = DocumentTextExtractor.convert_to_csv_form(context_dict)
+        self.assertEqual(csv_format, [['us', 'text_1: let us go then'], ['', 'text_1: let us go']])
+
+    def test_convert_to_csv_format_multi_word(self):
+        context_dict = {
+            'us': ['text_1: let us go then', 'text_1: let us go'],
+            'hotter': ['text_1: i get hotter.', 'text_1: Did you say hotter?'],
+        }
+        csv_format = DocumentTextExtractor.convert_to_csv_form(context_dict)
+        self.assertEqual(
+            csv_format,
+            [
+                ['us', 'text_1: let us go then'],
+                ['', 'text_1: let us go'],
+                ['hotter', 'text_1: i get hotter.'],
+                ['', 'text_1: Did you say hotter?']
+            ]
+        )
+
 
 
 if __name__ == '__main__':
