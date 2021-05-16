@@ -16,7 +16,10 @@ def download_nltk_data():
     else:
         ssl._create_default_https_context = _create_unverified_https_context
 
-    download('stopwords', 'universal_tagset', 'averaged_perceptron_tagger')
+    download('punkt')
+    download('stopwords')
+    download('universal_tagset')
+    download('averaged_perceptron_tagger')
 
 
 class DocumentTextExtractor:
