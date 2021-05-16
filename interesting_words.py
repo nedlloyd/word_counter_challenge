@@ -26,9 +26,8 @@ from collections import defaultdict
 from string import punctuation
 
 import pandas as pd
-from nltk import word_tokenize, sent_tokenize, pos_tag, FreqDist, TweetTokenizer, bigrams
+from nltk import sent_tokenize, pos_tag, FreqDist, TweetTokenizer, bigrams
 from nltk.corpus import stopwords
-from tabulate import tabulate
 
 
 class WordContextFinder:
