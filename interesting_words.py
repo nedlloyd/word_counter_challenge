@@ -178,11 +178,15 @@ class WordCounter:
 
     @staticmethod
     def most_common_words(all_tokens, interesting_words, number):
+        """
+        :param all_tokens: list of word String objects representing all tokens
+        :param interesting_words: list of word String objects words to be counted
+        :param number: int the number of most common words to be returned
+        :return: list - most common words ordered alphabetically
+        """
         freq_dist = FreqDist([t for t in all_tokens if t in interesting_words]).most_common(number)
         return sorted(w for (w, freq) in freq_dist)
 
 
 if __name__ == '__main__':
-    wc = WordCounter()
     print('ALL WORKING')
-    # non_stop_words = wc.get_all_non_stop_words('documents')
