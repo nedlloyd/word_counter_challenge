@@ -12,19 +12,34 @@ The program outputs a table of the most common of these words and their sentence
 
 
 ##Set up instructions:
+Using python 3.9
 ### clone repo
 git clone https://github.com/nedlloyd/word_counter_challenge.git
 ### create virtual env
 python3 -m venv /path/to/new/virtual/environment
 ### start virtual env
 . path/to/env/bin/activate
-### install requirements
-pip install -r path/to/requirements/file/in/project
+### install requirements - from inside project directory
+pip install -r requirements.txt
 ### start shell
 ipython
-### download interesting words are csv (in shell). 
-from interesting_words import *
-### 6 is the number of following word types. 10 means the most common 10 interesting words.
-extractor = DocumentTextExtractor(‘documents’, 6, 10)
+### Download nltk package data - paste into shell. 
+import nltk
+import ssl
+
+try:
+    _create_unverified_https_context = ssl._create_unverified_context
+except AttributeError:
+    pass
+else:
+    ssl._create_default_https_context = _create_unverified_https_context
+
+nltk.download('stopwords', 'universal_tagset', 'averaged_perceptron_tagger')
+
+#### 'documents' is where the directory containing documents is
+#### 6 is the number of following word types. 
+#### 10 means the most common 10 interesting words.
+from interesting_words import DocumentTextExtractor
+extractor = DocumentTextExtractor('documents', 6, 10)
 extractor.export_interesting_words_as_csv()
 
