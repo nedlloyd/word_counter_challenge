@@ -107,7 +107,6 @@ class DocumentTextExtractor:
             e.g. {'phone': {'NOUN', 'VERB'}}
         """
         words_following_dict = defaultdict(set)
-        # TODO: here you could do yield
         for ((word, tag), (following_word, following_tag)) in bigram_tokens:
             words_following_dict[word].add(following_tag)
         return words_following_dict
@@ -144,10 +143,6 @@ class DocumentTextExtractor:
         df.to_csv('test.csv', index=False, header=['word', 'context'])
 
 
-# class GetInterestingWords:
-
-
-
 class WordNormalizer:
 
     @staticmethod
@@ -157,8 +152,6 @@ class WordNormalizer:
         :param remove_list: List of String objects - tokens to remove - should be in lower case
         :return: List of String objects corresponding to tokens - remove_list
         """
-        # TODO: is there anything that can't be stringed?
-        # TODO: no sure makes sense to also turn it all to strings here
         return [token for token in tokens if token.lower() not in remove_list]
 
     @staticmethod
