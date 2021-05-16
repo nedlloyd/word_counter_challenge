@@ -211,7 +211,6 @@ class TestWordContextFinder(TestCase):
 class TestDocumentTextExtractor(TestCase):
 
     def test_single_document_get_text(self):
-        # TODO this could be accomplished by writting temporary file
         document_string = DocumentTextExtractor._get_string_from_document('tests_files/test_directory/test_text_2.txt')
         self.assertEqual(
             document_string, "quite simply the second document.  and that, for now, is all you're getting - YES!"
