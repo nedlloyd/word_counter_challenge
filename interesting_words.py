@@ -26,12 +26,12 @@ class DocumentTextExtractor:
         self._most_common_number = most_common_number
         self._word_tokens = []
         self._sentence_tokens = []
-        self.tokenizer = TweetTokenizer()
+        self.tokenizer = TweetTokenizer
 
     def export_interesting_words_as_csv(self):
         interesting_words = self.get_interesting_words(number_following=self._number_following)
         most_common_10 = WordCounter.most_common_words(self._word_tokens, interesting_words, self._most_common_number)
-        contexts = WordContextFinder.get_word_contexts(self._sentence_tokens, most_common_10)
+        contexts = WordContextFinder.get_word_contexts(self._sentence_tokens, most_common_10, self.tokenizer)
         data_tabulate = self._convert_to_csv_form(contexts)
         self._export_csv(data_tabulate)
 
@@ -65,7 +65,7 @@ class DocumentTextExtractor:
         """
         for file_name in os.listdir(directory_name):
             document_string = self._get_string_from_document(f'{directory_name}/{file_name}')
-            self._word_tokens += [w.lower() for w in self.tokenizer.tokenize(document_string)]
+            self._word_tokens += [w.lower() for w in self.tokenizer().tokenize(document_string)]
             self._sentence_tokens += [(file_name, sent) for sent in sent_tokenize(document_string)]
 
     @staticmethod
@@ -116,17 +116,20 @@ class DocumentTextExtractor:
 class WordContextFinder:
 
     @staticmethod
-    def get_word_contexts(sentences, words):
+    def get_word_contexts(sentences, words, word_tokenizer):
         """
         Get sentence context for each word in sentence
         :param sentences: list of tuples of form (document_name, sentence)
         :param words: list of words Strings
+        :param word_tokenizer: Tokenizer class - tokenizer class used to tokenize sentence
         :return: dict of form {word - String: ['sentence contexts']}
         """
         context_dict = defaultdict(list)
         lower_case_words = [w.lower() for w in words]
         for (document, sentence) in sentences:
-            intersection = set(lower_case_words).intersection(set([w.lower() for w in sentence.split()]))
+            intersection = set(lower_case_words).intersection(
+                set([w.lower() for w in word_tokenizer().tokenize(sentence)])
+            )
             for word in intersection:
                 context_dict[word].append(f'{document}: {sentence}')
         return context_dict

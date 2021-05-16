@@ -1,6 +1,8 @@
 from string import punctuation
 from unittest import main, TestCase
 
+from nltk import TweetTokenizer
+
 from interesting_words import WordCounter, WordNormalizer, WordContextFinder, DocumentTextExtractor
 
 
@@ -100,7 +102,7 @@ class TestWordContextFinder(TestCase):
             ('text_1', 'as the evening is spread out against the sky')
         ]
         words = ['evening']
-        contexts = WordContextFinder.get_word_contexts(sentences, words)
+        contexts = WordContextFinder.get_word_contexts(sentences, words, TweetTokenizer)
         self.assertEqual(dict(contexts), {'evening': ['text_1: as the evening is spread out against the sky']})
 
     def test_get_context_of_word_different_case(self):
@@ -109,8 +111,28 @@ class TestWordContextFinder(TestCase):
             ('text_1', 'as the evening is spread out against the sky')
         ]
         words = ['Evening']
-        contexts = WordContextFinder.get_word_contexts(sentences, words)
+        contexts = WordContextFinder.get_word_contexts(sentences, words, TweetTokenizer)
         self.assertEqual(dict(contexts), {'evening': ['text_1: as the evening is spread out against the sky']})
+
+    def test_get_context_of_word_ending_with_punctuation(self):
+        sentences = [
+            ('text_1', 'let us go then'), ('text_1', 'you and i'),
+            ('text_1', 'as the evening is spread out against the sky.')
+        ]
+        words = ['sky']
+        contexts = WordContextFinder.get_word_contexts(sentences, words, TweetTokenizer)
+        self.assertEqual(dict(contexts), {'sky': ['text_1: as the evening is spread out against the sky.']})
+
+    def test_get_context_of_word_with_comma(self):
+        sentences = [
+            ('text_1', 'let us go then'), ('text_1', 'you and i'),
+            ('text_1', 'as the evening is spread out against the sky, seas, beasts and trees.')
+        ]
+        words = ['sky']
+        contexts = WordContextFinder.get_word_contexts(sentences, words, TweetTokenizer)
+        self.assertEqual(
+            dict(contexts), {'sky': ['text_1: as the evening is spread out against the sky, seas, beasts and trees.']}
+        )
 
     def test_get_context_sentence_different_case(self):
         sentences = [
@@ -118,7 +140,7 @@ class TestWordContextFinder(TestCase):
             ('text_1', 'as the Evening is spread out against the sky')
         ]
         words = ['evening']
-        contexts = WordContextFinder.get_word_contexts(sentences, words)
+        contexts = WordContextFinder.get_word_contexts(sentences, words, TweetTokenizer)
         self.assertEqual(dict(contexts), {'evening': ['text_1: as the Evening is spread out against the sky']})
 
     def test_multiple_sentences(self):
@@ -129,7 +151,7 @@ class TestWordContextFinder(TestCase):
             ('text_1', 'through half deserted streets')
         ]
         words = ['us']
-        contexts = WordContextFinder.get_word_contexts(sentences, words)
+        contexts = WordContextFinder.get_word_contexts(sentences, words, TweetTokenizer)
         self.assertEqual(dict(contexts), {'us': ['text_1: let us go then', 'text_1: let us go']})
 
     def test_duplicate_sentences(self):
@@ -140,7 +162,7 @@ class TestWordContextFinder(TestCase):
             ('text_1', 'through half deserted streets')
         ]
         words = ['us']
-        contexts = WordContextFinder.get_word_contexts(sentences, words)
+        contexts = WordContextFinder.get_word_contexts(sentences, words, TweetTokenizer)
         self.assertEqual(
             dict(contexts),
             {'us': ['text_1: let us go', 'text_1: let us go']}
@@ -154,7 +176,7 @@ class TestWordContextFinder(TestCase):
             ('text_2', 'through half deserted streets')
         ]
         words = ['us']
-        contexts = WordContextFinder.get_word_contexts(sentences, words)
+        contexts = WordContextFinder.get_word_contexts(sentences, words, TweetTokenizer)
         self.assertEqual(dict(contexts), {'us': ['text_1: let us go then', 'text_2: let us go']})
 
     def test_multiple_documents_same_sentence(self):
@@ -165,7 +187,7 @@ class TestWordContextFinder(TestCase):
             ('text_2', 'through half deserted streets')
         ]
         words = ['us']
-        contexts = WordContextFinder.get_word_contexts(sentences, words)
+        contexts = WordContextFinder.get_word_contexts(sentences, words, TweetTokenizer)
         self.assertEqual(
             dict(contexts),
             {'us': ['text_1: let us go', 'text_2: let us go']}
@@ -179,7 +201,7 @@ class TestWordContextFinder(TestCase):
             ('text_1', 'let us go'), ('text_1', 'through half deserted streets')
         ]
         words = ['us', 'evening']
-        contexts = WordContextFinder.get_word_contexts(sentences, words)
+        contexts = WordContextFinder.get_word_contexts(sentences, words, TweetTokenizer)
         self.assertEqual(
             dict(contexts),
             {
@@ -196,7 +218,7 @@ class TestWordContextFinder(TestCase):
             ('text_2', 'through half deserted streets'),
         ]
         words = ['us', 'evening']
-        contexts = WordContextFinder.get_word_contexts(sentences, words)
+        contexts = WordContextFinder.get_word_contexts(sentences, words, TweetTokenizer)
         self.assertEqual(
             dict(contexts),
             {
@@ -315,7 +337,6 @@ class TestDocumentTextExtractor(TestCase):
                 ['', 'text_1: Did you say hotter?']
             ]
         )
-
 
 
 if __name__ == '__main__':
