@@ -26,7 +26,6 @@ class WordContextFinder:
 class DocumentTextExtractor:
 
     def __init__(self):
-        self.word_tokenizer = CustomTokenizer
         self.word_tokens = []
         self.sentence_tokens = []
         self.tagged_normalized_words = []
