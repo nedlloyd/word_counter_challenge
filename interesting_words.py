@@ -155,16 +155,23 @@ class WordNormalizer:
 
     @staticmethod
     def word_tagger(tokens):
+        """
+        :param tokens: List words Strings
+        :return: List of tuples in form (word, word type)
+        """
         return pos_tag(tokens, tagset='universal')
 
-    @staticmethod
-    def create_bigrams(tokens):
-        return bigrams(tokens)
-
     def normalize_words(self, word_tokens):
+        """
+        - removes punctuation from words
+        - tags words with word types
+        - create bigram of (word, word_type) tuples
+        :param word_tokens: List words Strings
+        :return: list bigrams of (word, word_type) e.g. [((hammer, NOUN), (hard, ADJECTIVE))]
+        """
         no_punct_tokens = self.remove_from_tokens(word_tokens, list(punctuation) + ['’', '—'])
         tagged_tokens = self.word_tagger(no_punct_tokens)
-        return self.create_bigrams(tagged_tokens)
+        return bigrams(tagged_tokens)
 
 
 # TODO: maybe make this follow the same pattern as normal tokenizers

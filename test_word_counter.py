@@ -82,13 +82,14 @@ class TestWordNormalisation(TestCase):
             ["Just", "one", "line", "text", "matter"]
         )
 
-    def test_remove_tokens_contains_digits(self):
-        tokens = ["Just", 1, "line", "-", "Of", "text", "Doesn't", "matter", "."]
-        remove_list = ['of', "doesn't"] + list(punctuation)
-        self.assertEqual(
-            WordNormalizer.remove_from_tokens(tokens, remove_list),
-            ["Just", 1, "line", "text", "matter"]
-        )
+    # TODO: do we want to do this?
+    # def test_remove_tokens_contains_digits(self):
+    #     tokens = ["Just", 1, "line", "-", "Of", "text", "Doesn't", "matter", "."]
+    #     remove_list = ['of', "doesn't"] + list(punctuation)
+    #     self.assertEqual(
+    #         WordNormalizer.remove_from_tokens(tokens, remove_list),
+    #         ["Just", 1, "line", "text", "matter"]
+    #     )
 
     def test_tag_word_types(self):
         tokens = ['car']
@@ -111,32 +112,6 @@ class TestWordNormalisation(TestCase):
         self.assertEqual(
             WordNormalizer.word_tagger(tokens),
             tagged_words
-        )
-
-    def test_create_bigrams(self):
-        tokens = ['just', 'three', 'words']
-        token_bigrams = [("just", "three"), ("three", "words")]
-        self.assertEqual(
-            list(WordNormalizer.create_bigrams(tokens)),
-            token_bigrams
-        )
-
-    def test_create_bigrams_sentence(self):
-        tokens = ["Just", "one", "line", "of", "text", "is", "all"]
-        token_bigrams = [
-            ("Just", "one"), ("one", "line"), ("line", "of"), ("of", "text"), ("text", "is"), ("is", "all")
-        ]
-        self.assertEqual(
-            list(WordNormalizer.create_bigrams(tokens)),
-            token_bigrams
-        )
-
-    def test_create_bigrams_word_type_pairs(self):
-        tokens = [('just', 'ADV'), ('three', 'NUM'), ('words', 'NOUN')]
-        token_bigrams = [(('just', 'ADV'), ('three', 'NUM')), (('three', 'NUM'), ('words', 'NOUN'))]
-        self.assertEqual(
-            list(WordNormalizer.create_bigrams(tokens)),
-            token_bigrams
         )
 
 
