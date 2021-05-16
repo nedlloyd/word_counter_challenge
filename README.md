@@ -23,23 +23,11 @@ python3 -m venv /path/to/new/virtual/environment
 pip install -r requirements.txt
 ### start shell
 ipython
-### Download nltk package data - paste into shell. 
-import nltk  
-import ssl  
-
-try:  
-    _create_unverified_https_context = ssl._create_unverified_context  
-except AttributeError:  
-    pass  
-else:  
-    ssl._create_default_https_context = _create_unverified_https_context  
-
-nltk.download('stopwords', 'universal_tagset', 'averaged_perceptron_tagger')  
-
 #### 'documents' is where the directory containing documents is
 #### 6 is the number of following word types. 
 #### 10 means the most common 10 interesting words.
-from interesting_words import DocumentTextExtractor
+from interesting_words import DocumentTextExtractor, download_nltk_data
+download_nltk_data()
 extractor = DocumentTextExtractor('documents', 6, 10)
 extractor.export_interesting_words_as_csv()
 

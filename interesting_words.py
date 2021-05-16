@@ -1,10 +1,22 @@
 import os
 from collections import defaultdict
+import ssl
 from string import punctuation
 
 import pandas as pd
-from nltk import sent_tokenize, pos_tag, FreqDist, TweetTokenizer, bigrams
+from nltk import download, sent_tokenize, pos_tag, FreqDist, TweetTokenizer, bigrams
 from nltk.corpus import stopwords
+
+
+def download_nltk_data():
+    try:
+        _create_unverified_https_context = ssl._create_unverified_context
+    except AttributeError:
+        pass
+    else:
+        ssl._create_default_https_context = _create_unverified_https_context
+
+    download('stopwords', 'universal_tagset', 'averaged_perceptron_tagger')
 
 
 class DocumentTextExtractor:
