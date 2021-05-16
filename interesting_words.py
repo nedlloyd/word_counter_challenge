@@ -18,8 +18,9 @@ class WordContextFinder:
         :return: dict of form {word - String: ['sentence contexts']}
         """
         context_dict = defaultdict(list)
+        lower_case_words = [w.lower() for w in words]
         for (document, sentence) in sentences:
-            intersection = set(words).intersection(set(sentence.split()))
+            intersection = set(lower_case_words).intersection(set([w.lower() for w in sentence.split()]))
             for word in intersection:
                 context_dict[word].append(f'{document}: {sentence}')
         return context_dict

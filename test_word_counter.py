@@ -105,7 +105,7 @@ class TestWordCounter(TestCase):
 
 class TestWordContextFinder(TestCase):
 
-    def test_gets_context_of_word(self):
+    def test_get_context_of_word(self):
         sentences = [
             ('text_1', 'let us go then'), ('text_1', 'you and i'),
             ('text_1', 'as the evening is spread out against the sky')
@@ -113,6 +113,24 @@ class TestWordContextFinder(TestCase):
         words = ['evening']
         contexts = WordContextFinder.get_word_contexts(sentences, words)
         self.assertEqual(dict(contexts), {'evening': ['text_1: as the evening is spread out against the sky']})
+
+    def test_get_context_of_word_different_case(self):
+        sentences = [
+            ('text_1', 'let us go then'), ('text_1', 'you and i'),
+            ('text_1', 'as the evening is spread out against the sky')
+        ]
+        words = ['Evening']
+        contexts = WordContextFinder.get_word_contexts(sentences, words)
+        self.assertEqual(dict(contexts), {'evening': ['text_1: as the evening is spread out against the sky']})
+
+    def test_get_context_sentence_different_case(self):
+        sentences = [
+            ('text_1', 'let us go then'), ('text_1', 'you and i'),
+            ('text_1', 'as the Evening is spread out against the sky')
+        ]
+        words = ['evening']
+        contexts = WordContextFinder.get_word_contexts(sentences, words)
+        self.assertEqual(dict(contexts), {'evening': ['text_1: as the Evening is spread out against the sky']})
 
     def test_multiple_sentences(self):
         sentences = [
