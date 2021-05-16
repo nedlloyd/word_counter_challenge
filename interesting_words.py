@@ -1,26 +1,3 @@
-"""
-HOw to process all the text, using yield
-
-how to find all the interesting words?
-- easily can count the highest number of words of each type in documentdeactivate
-    - how to count only certainly kinds of words
-- then can easily iterate through actually finding where each is located and storing the sentence
-    - probably loop through the sentences
-    - could also use concordance, although in instructions it says sentence
-
-remove all punctuation inc from stop words then remove stop words then count them
-- but if the interesting words have punctuation how do we do that?
-- but it doesn't have to be those words...
-- if i have another interesting words criteriait can not be those words
-
-the moment you're saving stuff in a variable it's liable to get a bit crazy memorywise
-
-
-find words with highest different type subsequent words
-remove stop tokens
-find context for those words
-
-"""
 import os
 from collections import defaultdict
 from string import punctuation
