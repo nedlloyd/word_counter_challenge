@@ -369,19 +369,6 @@ class TestDocumentTextExtractor(TestCase):
             text_extractor.get_interesting_words(number_following=2), ['take', 'nothing', 'time', 'get']
         )
 
-    def test_convert_to_tabulate_format(self):
-        words_dict = {
-            'us': 'text_1: let us go then\n\ntext_2: let us go\n\n',
-            'evening': 'text_1: as the evening is spread out against the sky\n\n'
-        }
-        self.assertEqual(
-            DocumentTextExtractor.convert_to_tabulate_form(words_dict),
-            [
-                ['us', 'text_1: let us go then\n\ntext_2: let us go\n\n'],
-                ['evening', 'text_1: as the evening is spread out against the sky\n\n']
-            ]
-        )
-
     def test_convert_to_csv_format(self):
         context_dict = {'us': ['text_1: let us go then', 'text_1: let us go']}
         csv_format = DocumentTextExtractor.convert_to_csv_form(context_dict)

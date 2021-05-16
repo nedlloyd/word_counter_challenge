@@ -63,7 +63,6 @@ class DocumentTextExtractor:
         wcf = WordContextFinder(self.sentence_tokens, most_common_10)
         data_tabulate = self.convert_to_csv_form(wcf.contexts)
         self.export_csv(data_tabulate)
-        # self.tabulate_data(data_tabulate)
 
     @staticmethod
     def get_string_from_document(document_name):
@@ -115,15 +114,6 @@ class DocumentTextExtractor:
     def export_csv(csv_data):
         df = pd.DataFrame(csv_data)
         df.to_csv('test.csv', index=False, header=['word', 'context'])
-
-
-    @staticmethod
-    def convert_to_tabulate_form(word_context_dict):
-        return [[k, v] for k, v in word_context_dict.items()]
-
-    @staticmethod
-    def tabulate_data(table_date):
-        print(tabulate(table_date, ['word', 'context']))
 
 
 # TODO: make these more generic
