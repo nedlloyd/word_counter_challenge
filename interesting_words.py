@@ -32,7 +32,7 @@ class DocumentTextExtractor:
         self.tagged_normalized_words = []
 
     def print_interesting_word_table(self, directory_name, number_following):
-        self.get_sentence_and_work_tokens(directory_name)
+        self.set_sentence_and_work_tokens(directory_name)
         self.normalize_words()
         interesting_words = self.get_interesting_words(number_following=number_following)
         most_common_10 = WordCounter.most_common_words(self.word_tokens, interesting_words, 10)
@@ -47,7 +47,7 @@ class DocumentTextExtractor:
 
     # TODO: directory in directories? what then?
     # TODO: could change this so the sentences are the keys and the documents names are the values
-    def get_sentence_and_work_tokens(self, directory_name):
+    def set_sentence_and_work_tokens(self, directory_name):
         for file_name in os.listdir(directory_name):
             document_string = self.get_string_from_document(f'{directory_name}/{file_name}')
             tokenizer = CustomTokenizer(document_string)
@@ -143,8 +143,6 @@ class WordCounter:
     def most_common_words(all_tokens, interesting_words, number):
         freq_dist = FreqDist([t for t in all_tokens if t in interesting_words]).most_common(number)
         return sorted(w for (w, freq) in freq_dist)
-
-
 
 
 if __name__ == '__main__':
