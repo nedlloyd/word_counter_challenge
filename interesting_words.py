@@ -26,7 +26,6 @@ class WordContextFinder:
         return context_dict
 
 
-# TODO: error handling on opening files
 class DocumentTextExtractor:
 
     def __init__(self, directory_name, number_following, most_common_number):
