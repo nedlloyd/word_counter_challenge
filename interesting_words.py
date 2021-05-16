@@ -85,9 +85,9 @@ class DocumentTextExtractor:
     @staticmethod
     def _create_word_type_following_dict(bigram_tokens):
         """
-        :param bigram_tokens: List of tuples representing bigrams containing of tuples of word and type
+        :param bigram_tokens: List of tuples representing bigrams containing of tuples of word and type.
             e.g. [((hammer, NOUN), (hard, ADJECTIVE))]
-        :return: Dict with key of words and values of a set of following type words
+        :return: Dict with key of words and values of a set of following type words.
             e.g. {'phone': {'NOUN', 'VERB'}}
         """
         words_following_dict = defaultdict(set)
@@ -98,10 +98,10 @@ class DocumentTextExtractor:
     @staticmethod
     def _find_number_follow_types(words_following_dict, number):
         """
-        :param words_following_dict: Dict with key of words and values of a set of following type words
-            e.g. {'phone': {'NOUN', 'VERB'}}
-        :param number: Int - minimum number of follow types
-        :return: list - Strings corresponding to words with follow types >= number
+        :param words_following_dict: Dict with key of words and values of a set of following type words.
+            e.g. {'phone': {'NOUN', 'VERB'}}.
+        :param number: Int - minimum number of follow types.
+        :return: list - Strings corresponding to words with follow types >= number.
         """
         return [word for word, follow_types in words_following_dict.items() if len(follow_types) >= number]
 
@@ -132,11 +132,11 @@ class WordContextFinder:
     @staticmethod
     def get_word_contexts(sentences, words, word_tokenizer):
         """
-        Get sentence context for each word in sentence
-        :param sentences: list of tuples of form (document_name, sentence)
-        :param words: list of words Strings
-        :param word_tokenizer: Tokenizer class - tokenizer class used to tokenize sentence
-        :return: dict of form {word - String: ['sentence contexts']}
+        Get sentence context for each word in sentence.
+        :param sentences: list of tuples of form (document_name, sentence).
+        :param words: list of Strings corresponding to words tokens.
+        :param word_tokenizer: Tokenizer class - tokenizer class used to tokenize sentence.
+        :return: dict of form {word - String: ['sentence contexts']}.
         """
         context_dict = defaultdict(list)
         lower_case_words = [w.lower() for w in words]
@@ -154,16 +154,16 @@ class WordNormalizer:
     @staticmethod
     def remove_from_tokens(tokens, remove_list):
         """
-        :param tokens: List of String objects
-        :param remove_list: List of String objects - tokens to remove - should be in lower case
-        :return: List of String objects corresponding to tokens - remove_list
+        :param tokens: List of String objects.
+        :param remove_list: List of String objects - tokens to remove - should be in lower case.
+        :return: List of String objects corresponding to tokens without words from remove_list.
         """
         return [token for token in tokens if token.lower() not in remove_list]
 
     @staticmethod
     def word_tagger(tokens):
         """
-        :param tokens: List words Strings
+        :param tokens: List Strings corresponding to word tokens
         :return: List of tuples in form (word, word type)
         """
         return pos_tag(tokens, tagset='universal')
@@ -172,8 +172,8 @@ class WordNormalizer:
         """
         - removes punctuation from words
         - tags words with word types
-        - create bigram of (word, word_type) tuples
-        :param word_tokens: List words Strings
+        - creates bigram of in form tuples (word, word_type)
+        :param word_tokens: List Strings representing words
         :return: list bigrams of (word, word_type) e.g. [((hammer, NOUN), (hard, ADJECTIVE))]
         """
         no_punct_tokens = self.remove_from_tokens(word_tokens, list(punctuation) + ['’', '—'])
@@ -186,14 +186,10 @@ class WordCounter:
     @staticmethod
     def most_common_words(all_tokens, interesting_words, number):
         """
-        :param all_tokens: list of word String objects representing all tokens
-        :param interesting_words: list of word String objects words to be counted
-        :param number: int the number of most common words to be returned
-        :return: list - most common words ordered alphabetically
+        :param all_tokens: list of String objects representing all tokens.
+        :param interesting_words: list of String objects representing words to be counted.
+        :param number: int number of most common words to be returned.
+        :return: list - most common words ordered alphabetically.
         """
         freq_dist = FreqDist([t for t in all_tokens if t in interesting_words]).most_common(number)
         return sorted(w for (w, freq) in freq_dist)
-
-
-if __name__ == '__main__':
-    print('ALL WORKING')
