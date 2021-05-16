@@ -77,8 +77,6 @@ class DocumentTextExtractor:
         with open(document_path) as file:
             return file.read()
 
-    # TODO: directory in directories? what then?
-    # TODO: could change this so the sentences are the keys and the documents names are the values
     def _extract_sentence_and_work_tokens(self, directory_name):
         """
         Sets _word_tokens variable as list of word Strings in lower case.
