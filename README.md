@@ -11,7 +11,7 @@ I don’t know if this is linguistically significant but it was interesting to m
 The program outputs a table of the most common of these words and their sentence contexts as a csv.  
 
 
-##Set up instructions:
+## Set up instructions:
 Using python 3.9
 ### clone repo
 git clone https://github.com/nedlloyd/word_counter_challenge.git
