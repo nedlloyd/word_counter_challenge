@@ -81,13 +81,13 @@ class DocumentTextExtractor:
     # TODO: could change this so the sentences are the keys and the documents names are the values
     def _extract_sentence_and_work_tokens(self, directory_name):
         """
-        Sets _word_tokens variable as list of word Strings.
+        Sets _word_tokens variable as list of word Strings in lower case.
         Sets _sentence_tokens variable as list of sentence Strings.
         :param directory_name: String representing directory name.
         """
         for file_name in os.listdir(directory_name):
             document_string = self._get_string_from_document(f'{directory_name}/{file_name}')
-            self._word_tokens += self.tokenizer.tokenize(document_string)
+            self._word_tokens += [w.lower() for w in self.tokenizer.tokenize(document_string)]
             self._sentence_tokens += [(file_name, sent) for sent in sent_tokenize(document_string)]
 
     def _normalize_words(self):

@@ -308,7 +308,7 @@ class TestDocumentTextExtractor(TestCase):
         text_extractor = DocumentTextExtractor('tests/test_extractor', 5, 10)
         text_extractor._extract_sentence_and_work_tokens('tests/test_extractor')
         self.assertEqual(
-            text_extractor.get_interesting_words(number_following=2), ['take', 'nothing', 'time', 'get']
+            text_extractor.get_interesting_words(number_following=2), ['take', 'nothing', 'time', 'whenever', 'get']
         )
 
     def test_convert_to_csv_format(self):
