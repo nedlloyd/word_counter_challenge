@@ -38,11 +38,11 @@ class WordContextFinder:
 
     @staticmethod
     def get_word_contexts(sentences, words):
-        context_dict = defaultdict(str)
+        context_dict = defaultdict(list)
         for (document, sentence) in sentences:
             intersection = set(words).intersection(set(sentence.split()))
             for word in intersection:
-                context_dict[word] += f'{document}: {sentence}\n\n'
+                context_dict[word].append(f'{document}: {sentence}')
         return context_dict
 
 
@@ -61,10 +61,9 @@ class DocumentTextExtractor:
         interesting_words = self.get_interesting_words(number_following=number_following)
         most_common_10 = WordCounter.most_common_words(self.word_tokens, interesting_words, 10)
         wcf = WordContextFinder(self.sentence_tokens, most_common_10)
-        # dt = pd.DataFrame.from_dict(wcf.contexts, orient='index')
-        # # print(dt)
-        data_tabulate = self.convert_to_tabulate_form(wcf.contexts)
-        self.tabulate_data(data_tabulate)
+        data_tabulate = self.convert_to_csv_form(wcf.contexts)
+        self.export_csv(data_tabulate)
+        # self.tabulate_data(data_tabulate)
 
     @staticmethod
     def get_string_from_document(document_name):
@@ -89,7 +88,6 @@ class DocumentTextExtractor:
         following_dict = self.create_word_type_following_dict(self.tagged_normalized_words)
         # get all words that have three or more different followers
         interesting_words = self.find_number_follow_types(following_dict, number_following)
-        # print(f'interesting-words: {}')
         # strip out the stop words
         return WordNormalizer.remove_from_tokens(interesting_words, stopwords.words('english'))
 
@@ -112,6 +110,12 @@ class DocumentTextExtractor:
             for i, sentence in enumerate(sentences):
                 csv_format.append([word, sentence] if i == 0 else ['', sentence])
         return csv_format
+
+    @staticmethod
+    def export_csv(csv_data):
+        df = pd.DataFrame(csv_data)
+        df.to_csv('test.csv', index=False, header=['word', 'context'])
+
 
     @staticmethod
     def convert_to_tabulate_form(word_context_dict):

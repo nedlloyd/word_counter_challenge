@@ -187,7 +187,7 @@ class TestWordContextFinder(TestCase):
         ]
         words = ['evening']
         wcf = WordContextFinder(sentences, words)
-        self.assertEqual(dict(wcf.contexts), {'evening': 'text_1: as the evening is spread out against the sky\n\n'})
+        self.assertEqual(dict(wcf.contexts), {'evening': ['text_1: as the evening is spread out against the sky']})
 
     def test_multiple_sentences(self):
         sentences = [
@@ -198,7 +198,7 @@ class TestWordContextFinder(TestCase):
         ]
         words = ['us']
         wcf = WordContextFinder(sentences, words)
-        self.assertEqual(dict(wcf.contexts), {'us': 'text_1: let us go then\n\ntext_1: let us go\n\n'})
+        self.assertEqual(dict(wcf.contexts), {'us': ['text_1: let us go then', 'text_1: let us go']})
 
     def test_duplicate_sentences(self):
         sentences = [
@@ -211,7 +211,7 @@ class TestWordContextFinder(TestCase):
         wcf = WordContextFinder(sentences, words)
         self.assertEqual(
             dict(wcf.contexts),
-            {'us': 'text_1: let us go\n\ntext_1: let us go\n\n'}
+            {'us': ['text_1: let us go', 'text_1: let us go']}
         )
 
     def test_multiple_documents(self):
@@ -223,7 +223,7 @@ class TestWordContextFinder(TestCase):
         ]
         words = ['us']
         wcf = WordContextFinder(sentences, words)
-        self.assertEqual(dict(wcf.contexts), {'us': 'text_1: let us go then\n\ntext_2: let us go\n\n'})
+        self.assertEqual(dict(wcf.contexts), {'us': ['text_1: let us go then', 'text_2: let us go']})
 
     def test_multiple_documents_same_sentence(self):
         sentences = [
@@ -236,7 +236,7 @@ class TestWordContextFinder(TestCase):
         wcf = WordContextFinder(sentences, words)
         self.assertEqual(
             dict(wcf.contexts),
-            {'us': 'text_1: let us go\n\ntext_2: let us go\n\n'}
+            {'us': ['text_1: let us go', 'text_2: let us go']}
         )
 
     def test_multiple_words(self):
@@ -251,8 +251,8 @@ class TestWordContextFinder(TestCase):
         self.assertEqual(
             dict(wcf.contexts),
             {
-                'us': 'text_1: let us go then\n\ntext_1: let us go\n\n',
-                'evening': 'text_1: as the evening is spread out against the sky\n\n'
+                'us': ['text_1: let us go then', 'text_1: let us go'],
+                'evening': ['text_1: as the evening is spread out against the sky']
             }
         )
 
@@ -268,12 +268,10 @@ class TestWordContextFinder(TestCase):
         self.assertEqual(
             dict(wcf.contexts),
             {
-                'us': 'text_1: let us go then\n\ntext_2: let us go\n\n',
-                'evening': 'text_1: as the evening is spread out against the sky\n\n'
+                'us': ['text_1: let us go then', 'text_2: let us go'],
+                'evening': ['text_1: as the evening is spread out against the sky']
             }
         )
-
-
 
 
 class TestDocumentTextExtractor(TestCase):
