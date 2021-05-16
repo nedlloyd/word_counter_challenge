@@ -24,17 +24,17 @@ pip install -r requirements.txt
 ### start shell
 ipython
 ### Download nltk package data - paste into shell. 
-import nltk
-import ssl
+import nltk  
+import ssl  
 
-try:
-    _create_unverified_https_context = ssl._create_unverified_context
-except AttributeError:
-    pass
-else:
-    ssl._create_default_https_context = _create_unverified_https_context
+try:  
+    _create_unverified_https_context = ssl._create_unverified_context  
+except AttributeError:  
+    pass  
+else:  
+    ssl._create_default_https_context = _create_unverified_https_context  
 
-nltk.download('stopwords', 'universal_tagset', 'averaged_perceptron_tagger')
+nltk.download('stopwords', 'universal_tagset', 'averaged_perceptron_tagger')  
 
 #### 'documents' is where the directory containing documents is
 #### 6 is the number of following word types. 
