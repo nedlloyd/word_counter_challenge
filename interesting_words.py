@@ -124,7 +124,7 @@ class DocumentTextExtractor:
         export data to csv
         """
         df = pd.DataFrame(csv_data)
-        df.to_csv('test.csv', index=False, header=['word', 'context'])
+        df.to_csv('interesting_words.csv', index=False, header=['word', 'context'])
 
 
 class WordContextFinder:

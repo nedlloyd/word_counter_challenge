@@ -23,6 +23,8 @@ python3 -m venv /path/to/new/virtual/environment
 pip install -r requirements.txt
 ### start shell
 ipython
+### Download interesting words
+#### Document will be downloaded as interesting_words.csv and will be downloaded into project folder. 
 #### 'documents' is where the directory containing documents is
 #### 6 is the number of following word types. 
 #### 10 means the most common 10 interesting words.
